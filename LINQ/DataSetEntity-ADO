@@ -1,0 +1,59 @@
+   public partial class Form1 : Form
+    {
+
+        DataSet ds = new DataSet();
+        static string cadena = "Data Source=.;Initial Catalog=Hospital;User ID=sa";
+        SqlDataAdapter adHosp = new SqlDataAdapter("select * from hospital", cadena);
+        SqlDataAdapter adDoctor = new SqlDataAdapter("select * from doctor", cadena);
+        SqlDataAdapter adPlant = new SqlDataAdapter("select * from Plantilla", cadena);
+
+
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            adHosp.Fill(ds, "Hospital");
+            adDoctor.Fill(ds, "Doctor");
+            adPlant.Fill(ds, "Palntilla");
+
+            ds.Relations.Add("HospDoctor", ds.Tables[0].Columns["hospital_cod"], ds.Tables[1].Columns["hospital_cod"]);
+
+            ds.Relations.Add("HospPlant", ds.Tables[0].Columns["hospital_cod"], ds.Tables[2].Columns["hospital_cod"]);
+
+            //Los orígenes de datos que implementan la interfaz genérica IEnumerable<(Of <(T>)>) 
+            //se pueden consultar a través de LINQ. La llamada a AsEnumerable en DataTable devuelve 
+            //un objeto que implementa la interfaz IEnumerable<(Of <(T>)>) genérica, que actúa 
+            //como origen de datos para las consultas de LINQ to DataSet.
+
+            var apeDoctores =
+                from seleccion in ds.Tables["Hospital"].AsEnumerable()
+                select seleccion.Field<string>("nombre");
+
+            foreach (var elemento in apeDoctores)
+            {
+                listBox1.Items.Add(elemento);
+            }
+
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            DataTable hosp = ds.Tables["Hospital"];
+            var consulta =
+            from datos in hosp.AsEnumerable()
+            where datos.Field<String>("nombre") ==
+            this.listBox1.SelectedItem.ToString()
+            select new
+            {
+                numero1 = datos.GetChildRows("HospPlant").Count(),
+                numero2 = datos.GetChildRows("HospDoctor").Count()
+            };
+            textBox1.Text = consulta.First().numero1.ToString();
+            textBox2.Text = consulta.First().numero2.ToString();
+
+        }
+    }

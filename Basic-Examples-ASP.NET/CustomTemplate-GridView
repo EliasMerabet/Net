@@ -1,0 +1,162 @@
+ASP.
+<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="_Default" %>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+    <style type="text/css">
+        .auto-style1 {
+            margin-top: 121px;
+        }
+    </style>
+</head>
+<body>
+    <form id="form1" runat="server">
+    <div>
+    
+        <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" CssClass="auto-style1" OnRowCancelingEdit="GridView1_RowCancelingEdit" OnRowEditing="GridView1_RowEditing" OnRowUpdating="GridView1_RowUpdating">
+            <Columns>
+                <asp:TemplateField HeaderText="Numero">
+                    <ItemTemplate>
+                        <asp:Label ID="Label1" runat="server" Text='<%#Eval("EMP_NO") %>'></asp:Label>
+                    </ItemTemplate>
+                </asp:TemplateField>
+                <asp:TemplateField HeaderText="Apellido">
+                    <EditItemTemplate>
+                        <asp:TextBox ID="TextBox1" runat="server" Text='<%#Eval("APELLIDO") %>'></asp:TextBox>
+                    </EditItemTemplate>
+                    <ItemTemplate>
+                        <asp:Label ID="Label2" runat="server" Text='<%#Eval("APELLIDO") %>'></asp:Label>
+                    </ItemTemplate>
+                </asp:TemplateField>
+                <asp:TemplateField HeaderText="Departamento">
+                    <EditItemTemplate>
+                        <asp:DropDownList ID="DropDownList1" runat="server">
+                        </asp:DropDownList>
+                    </EditItemTemplate>
+                    <ItemTemplate>
+                        <asp:Label ID="Label3" runat="server" Text='<%#Eval("DNOMBRE") %>'></asp:Label>
+                    </ItemTemplate>
+                </asp:TemplateField>
+                <asp:TemplateField HeaderText="Salario">
+                    <EditItemTemplate>
+                        <asp:TextBox ID="TextBox2" runat="server" Text='<%#Eval("SALARIO") %>'></asp:TextBox>
+                    </EditItemTemplate>
+                    <ItemTemplate>
+                        <asp:Label ID="Label4" runat="server" Text='<%#Eval("SALARIO") %>'></asp:Label>
+                    </ItemTemplate>
+                </asp:TemplateField>
+                <asp:TemplateField HeaderText="Accion">
+                    <EditItemTemplate>
+                        <asp:LinkButton ID="LinkButton2" runat="server" CommandName="update">Actualizar</asp:LinkButton>
+                        <asp:LinkButton ID="LinkButton3" runat="server" CommandName="cancel">Cancelar</asp:LinkButton>
+                    </EditItemTemplate>
+                    <ItemTemplate>
+                        <asp:LinkButton ID="LinkButton1" runat="server" CommandName="edit">Editar</asp:LinkButton>
+                    </ItemTemplate>
+                </asp:TemplateField>
+            </Columns>
+        </asp:GridView>
+    
+    </div>
+    </form>
+</body>
+</html>
+
+CLASS.
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+public partial class _Default : System.Web.UI.Page
+{
+
+    DeptEmpDataContext contexto = new DeptEmpDataContext();
+    IQueryable<Object> consultaEmpDept;
+    DropDownList lista;
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        consultaEmpDept = from emp in contexto.EMP
+                      join dept in contexto.DEPT on emp.DEPT_NO equals dept.DEPT_NO
+                      select new
+                      {
+                          emp_no = emp.EMP_NO,
+                          apellido = emp.APELLIDO,
+                          dnombre = dept.DNOMBRE,
+                          salario = emp.SALARIO,
+                          dept_no = dept.DEPT_NO,
+                      };
+
+        if (this.Page.IsPostBack == false)
+        {
+            this.CargarDatos();
+        }
+
+    }
+
+    private void CargarDatos()
+    {
+        this.GridView1.DataSource = consultaEmpDept;
+        this.GridView1.DataKeyNames = new string[] { "EMP_NO" };
+        this.GridView1.DataBind();
+    }
+
+
+
+    protected void GridView1_RowEditing(object sender, GridViewEditEventArgs e)
+    {
+        String departamento;
+        Label etiqueta1 = (Label)this.GridView1.Rows[e.NewEditIndex].FindControl("Label3");
+        departamento = etiqueta1.Text;
+
+        this.GridView1.EditIndex = e.NewEditIndex;
+        CargarDatos();
+
+        lista = (DropDownList)this.GridView1.Rows[e.NewEditIndex].FindControl("DropDownList1");
+
+        lista.DataSource = consultaEmpDept;
+        lista.DataTextField = "dnombre";
+        lista.DataValueField = "dept_no";
+        lista.DataBind();
+
+        lista.Items.FindByText(departamento).Selected = true;
+    }
+
+    protected void GridView1_RowUpdating(object sender, GridViewUpdateEventArgs e)
+    {
+        //TAMBIEN SE PUEDE HACER UN FINDCONTROL DE LA LABEL.
+        int empid = int.Parse(GridView1.DataKeys[e.RowIndex].Value.ToString());
+
+        //PUEDO RECORRER MI CONSULTA CON UN FOR Y COMPROBAR EL EMP_NO.
+        //ESTO ES COMO HIBERNATE, NO CONSUME CONEXION. MEJOR HACER UNA CONSULTA
+        //NUEVA CON EL WHERE.
+        var empupd = from datos in contexto.EMP
+                     where datos.EMP_NO == empid
+                     select datos;
+
+
+        EMP empleado = empupd.First();
+        TextBox t_apel = (TextBox)this.GridView1.Rows[e.RowIndex].FindControl("txtapel");
+        TextBox t_sal = (TextBox)this.GridView1.Rows[e.RowIndex].FindControl("txtsalario");
+        lista = (DropDownList)this.GridView1.Rows[e.RowIndex].FindControl("ddldept");
+        empleado.APELLIDO = t_apel.Text;
+        empleado.SALARIO = int.Parse(t_sal.Text);
+        empleado.DEPT_NO = int.Parse(lista.SelectedValue);
+        contexto.SubmitChanges();
+        GridView1.EditIndex = -1;
+        CargarDatos();
+
+    }
+
+    protected void GridView1_RowCancelingEdit(object sender, GridViewCancelEditEventArgs e)
+    {
+        GridView1.EditIndex = -1;
+        CargarDatos();
+    }
+}

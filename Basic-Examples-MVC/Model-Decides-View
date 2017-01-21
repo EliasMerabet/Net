@@ -1,0 +1,49 @@
+@{
+    ViewBag.Title = "EmpleadosHospital";
+}
+
+<h2>Empleados del Hospital</h2>
+
+@if (Model is List<VistaEnFuncionModelo.Models.DOCTOR>)
+{
+
+    <h3>Doctores</h3>
+
+    <table border="1">
+        <tr>
+            <th>CÓDIGO</th>
+            <th>APELLIDO</th>
+            <th>ESPECIALIDAD</th>
+        </tr>
+        @foreach (VistaEnFuncionModelo.Models.DOCTOR doc in Model)
+        {
+            <tr>
+                <td>@doc.DOCTOR_NO</td>
+                <td>@doc.APELLIDO</td>
+                <td>@doc.ESPECIALIDAD</td>
+            </tr>
+        }
+    </table>
+}
+else
+{
+
+
+    <h3>Plantilla</h3>
+
+    <table border="1">
+        <tr>
+            <th>APELLIDO</th>
+            <th>FUNCION</th>
+            <th>SALARIO</th>
+        </tr>
+        @foreach (VistaEnFuncionModelo.Models.PLANTILLA p in Model)
+        {
+            <tr>
+                <td>@p.APELLIDO</td>
+                <td>@p.FUNCION</td>
+                <td>@p.SALARIO</td>
+            </tr>
+        }
+    </table>
+}

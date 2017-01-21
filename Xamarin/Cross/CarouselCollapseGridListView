@@ -1,0 +1,106 @@
+XAML.
+
+<?xml version="1.0" encoding="UTF-8"?>
+  <CarouselPage xmlns="http://xamarin.com/schemas/2014/forms"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        x:Class="namespace.class">
+
+    </CarouselPage>
+    
+XAML.CS.
+
+        static Color fondoBlancoPalido = Color.FromHex("#F2F2F2");
+        static Color slateGray4 = Color.FromHex("#6C7B8B");
+        static Color aliceblue = Color.FromHex("#F0F8FF");
+        static Color honeydew = Color.FromHex("#F5FFFA");
+        static Color lemonchiffon = Color.FromHex("#FFFACD");
+        static Color lightsalmon = Color.FromHex("#FFA07A");
+        static Color thistle1 = Color.FromHex("#FFE1FF");
+        static Color tomato4 = Color.FromHex("#8B3626");
+        static bool collapse = false;
+
+        public I()
+        {
+            InitializeComponent();
+
+            var i = new I_M();
+            foreach (var in in List.list)
+            {
+                generateContent(in);
+            }
+            
+        }
+
+        private void generateContent(Obj obj)
+        {
+            Grid grid = new Grid();
+            grid.RowDefinitions.Add(new RowDefinition { Height = 2 });
+            grid.RowDefinitions.Add(new RowDefinition { Height = 10 });
+
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = 1 });
+
+            grid.ColumnSpacing = 0;
+            grid.RowSpacing = 0;
+            grid.BackgroundColor = Color.White;
+            grid.HorizontalOptions = LayoutOptions.FillAndExpand;
+            grid.VerticalOptions = LayoutOptions.FillAndExpand;
+
+            var tgr = new TapGestureRecognizer { NumberOfTapsRequired = 1 };
+            tgr.TappedCallback = (sender, args) => {
+                if (!collapse)
+                {
+                    grid.RowDefinitions.RemoveAt(0);
+                    grid.RowDefinitions.Add(new RowDefinition { Height = Xamarin.Forms.GridLength.Auto });
+                    collapse = true;
+                }
+                else
+                {
+                    grid.RowDefinitions.RemoveAt(0);
+                    grid.RowDefinitions.Add(new RowDefinition { Height = Xamarin.Forms.GridLength.Auto });
+                    collapse = false;
+                }
+            };
+            grid.GestureRecognizers.Add(tgr);
+
+            Label row0 = new Label { BackgroundColor = tomato4, HeightRequest = 2, Text = "" };
+            grid.Children.Add(row0, 0, 5, 0, 1);
+
+            var listViewIT = new DataTemplate(() =>
+            {
+                var grid1 = new Grid();
+
+                grid1.VerticalOptions = LayoutOptions.Center;
+                grid1.HorizontalOptions = LayoutOptions.Center;
+                grid1.ColumnSpacing = 0;
+                grid1.RowSpacing = 0;
+
+                grid1.RowDefinitions.Add(new RowDefinition { Height = 50 });
+                grid1.RowDefinitions.Add(new RowDefinition { Height = 3 });
+
+                grid1.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+                grid1.ColumnDefinitions.Add(new ColumnDefinition { Width = 1 });
+
+                Label rowG00 = new Label { BackgroundColor = aliceblue, Text = "Titulo de la Tarea: ", FontAttributes = FontAttributes.Bold, TextColor = Color.Black, VerticalTextAlignment = TextAlignment.Center, HorizontalTextAlignment = TextAlignment.Center, };
+                Label titulo = new Label { BackgroundColor = aliceblue, TextColor = Color.Black, VerticalTextAlignment = TextAlignment.Center, HorizontalTextAlignment = TextAlignment.Center, };
+                titulo.SetBinding(Label.TextProperty, new Binding("Title"));
+                grid1.Children.Add(rowG00, 0, 4, 0, 1);
+                grid1.Children.Add(titulo, 4, 6, 0, 1);
+
+                Label rowG10 = new Label { Text = "", BackgroundColor = fondoBlancoPalido };
+                grid1.Children.Add(rowG10, 0, 6, 1, 2);
+
+                return new ViewCell { View = grid1 };
+            });
+
+            listView.ItemTemplate = listViewIT;
+
+            grid.Children.Add(listView, 0, 5, 9, 10);
+
+            var content = new ContentPage
+            {
+                Content = grid,
+            };
+
+            this.Children.Add(content);
+        }

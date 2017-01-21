@@ -1,0 +1,445 @@
+VIEW.
+
+
+<link rel="stylesheet" type="text/css" href="~/xxx.css">
+<div class="NodeRoot" id="NodeRoot">
+    <div class="textNodeRoot">
+        <button class="btn btn-white pull-right shadow" id="ButFullScreen"><span class="glyphicon glyphicon-resize-full"></span></button>
+        @Model.nodeRoot.Name
+
+        @if (Model.nodeRPercent.ElementAt(0).averagePercent == 100)
+        {
+            <img class="shadow img-reward0" src="~/..." />
+        }
+        else
+        {
+            <img class="grayimage img-reward0" src="~/..." />
+        }
+    </div>
+
+    <div class="level1">
+        @{
+            int counter1 = 0;
+            int counter2 = 0;
+        }
+        @for (int k = 0; k < Model.children1.Count(); k++)
+        {
+            <div class="level15" id="divNivel2-@Html.Raw(k)" data-value="@Model.children1Percent.ElementAt(k).averagePercent">
+                <div style="width:100%;height:20px;">
+                    <div class="progress progress-sm">
+                        <div class="divprogress progress-bar active progress-bar-yellow progress-sm" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" id="bar2-@Html.Raw(k)" data-value="0"></div>
+                    </div>
+                </div>
+
+                <div style="width:100%;display: flex;">
+                    <div style="display:flex; align-items:center;">
+                        <div class="verticalText">
+                            @Model.children1.ElementAt(k).Name<br />
+                        </div>
+                            @if (Model.children1Percent.ElementAt(k).averagePercent == 100)
+                            {
+                                <img class="shadow img-reward1" src="~/..." />
+                            }
+                            else
+                            {
+                                <img class="grayimage img-reward1" src="~/..." />
+                            }
+                    </div>
+
+
+
+                    <div class="level2" id="@Html.Raw(k)">
+                        @for (int j = 0; j < Model.children2.Count(); j++)
+                        {
+                            if (Model.children2.ElementAt(j).idFatherNode == Model.children1.ElementAt(k).IdNode)
+                            {
+                                counter1++;
+                                <div class="layer3">
+                                    <div class="level3" id="divNivel3-@Html.Raw(contador1)" data-value="@Model.children2Percent.ElementAt(j).averagePercent">
+                                        <div class="progress progress-sm">
+                                            <div class="divprogress active progress-bar progress-bar-striped progress-bar-warning progress-sm" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" id="bar3-@Html.Raw(counter1)" ></div>
+                                        </div>
+                                        
+                                        <div class="textLevel">
+                                            <label>@Model.children2.ElementAt(j).Name</label>
+                                            @if (Model.children2Percent.ElementAt(j).averagePercent == 100)
+                                            {
+                                                <img class="shadow img-reward2" src="~/..." />
+                                            }
+                                            else
+                                            {
+                                                <img class="grayimage img-reward2" src="~/..." />
+                                            }
+                                        </div><br/>
+                                            <br />
+
+                                        @for (int i = 0; i < Model.childrne3.Count(); i++)
+                                        {
+                                            if (Model.children3.ElementAt(i).idFatherNode == Model.children2.ElementAt(j).IdNode)
+                                            {
+                                                counter22++;
+                                                <span class="textLeft">@Model.children3.ElementAt(i).Name</span><br/>
+                                                <div class="progress" style="position:relative;">
+                                                    <div class="divprogress progress-bar progress-bar-striped active progress-bar-success" role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100" id="divNivel4-@Html.Raw(counter2)" data-value="@Model.hijos3Porcentaje.ElementAt(i).mediaPorcentaje"></div>
+                                                    <div class="Image" style="position:absolute;right:0;">
+                                                        @if (Model.children3Percent.ElementAt(i).averagePercent == 100)
+                                                        {
+                                                            <img class="shadow img-reward1" src="~/..." />
+                                                        }
+                                                        else
+                                                        {
+                                                            <img class="grayimage img-reward1" src="~/..." />
+                                                        }
+                                                    </div>
+
+                                                </div>
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div><br />
+            </div>
+        }
+    </div>
+</div>
+
+@section SeccionScripts{
+<script type="text/javascript">
+
+    $(document).ready(function () {
+    // FOR COUNTING NUMBER OF CHILDREN PER LAYER. SO WE CAN SIZE THE WIDTH DINAMICALLY. THE HEIGHT IS HANDLE WITH FLEX PROPERTIES BY CSS.
+        contador = 0;
+        salir = false;
+        while (!salir) {
+            if ($('#level2-' + contador).length) {
+                var value = $('#level2-' + contador).attr('data-value');
+                drawGradient('level2-' + contador, value, '#ffeb3b', '#fffde7');
+                drawWidth('bar2-' + contador, value);
+            } else {
+                salir = true;
+            }
+            contador++;
+        }
+
+    // FOR COUNTING NUMBER OF CHILDREN PER LAYER. SO WE CAN SIZE THE WIDTH DINAMICALLY. THE HEIGHT IS HANDLE WITH FLEX PROPERTIES BY CSS.
+        contador = 1;
+        salir = false;
+        while (!salir) {
+            if ($('#divNivel3-' + contador).length) {
+                var value = $('#level3-' + contador).attr('data-value');
+                drawGradient('level3-' + contador, value, '#ffb300', '#ffecb3');
+                drawWidth('bar3-' + contador, value);
+            } else {
+                salir = true;
+            }
+            contador++;
+        }
+
+// FROM SIZE OF LAYER AND NUMBER OF CHILDREN, RETURNS WITDH FOR EACH ELEMENT DINAMICALLY
+        $(".level2").each(function () {
+            var nivel = this.id;
+            var hijosNivel = ($("#" + nivel).find(".layer3").length);
+            var ancho = (100 / hijosNivel);
+            $("#" + nivel).find(".layer3").css("width", ancho + "%");
+        });
+        
+    });
+
+// RETURNS VALUE OF PERCENT TO EACH ELEMENT BY DATA-VALUE PROPERTY IN ELEMENT.
+    var drawWidth = function (elementId, value) {
+        $('#'+elementId).width(value + "%");
+    }
+
+// FOR SETTING A PERCENT OF GRADIENT.
+    var drawGradient = function(elementId, value, color1, color2)
+    {
+        if (value < 0) value = 0;
+        valueColor = value - 10;
+        if (value == 100) {
+            valueColor = value;
+        }
+
+        document.getElementById(elementId).style.background = "linear-gradient(to right, " + color1 + " 0%, " + color1 + " " + valueColor + "%," + color2 + " " + value + "%, " + color2 + " 100%)";
+
+    }
+
+</script>
+}
+
+CSS.
+
+.rootNode {
+    font-weight: bold;
+    margin: 0px;
+    text-align: center;
+    padding-bottom:10px;
+    background:#1e88e5 url(../images/MapaAvance/texture.png) repeat;
+
+    background: rgba(147,206,222,1);
+    background: -moz-linear-gradient(left, rgba(147,206,222,1) 0%, rgba(117,189,209,1) 41%, rgba(73,165,191,1) 100%);
+    background: -webkit-gradient(left top, right top, color-stop(0%, rgba(147,206,222,1)), color-stop(41%, rgba(117,189,209,1)), color-stop(100%, rgba(73,165,191,1)));
+    background: -webkit-linear-gradient(left, rgba(147,206,222,1) 0%, rgba(117,189,209,1) 41%, rgba(73,165,191,1) 100%);
+    background: -o-linear-gradient(left, rgba(147,206,222,1) 0%, rgba(117,189,209,1) 41%, rgba(73,165,191,1) 100%);
+    background: -ms-linear-gradient(left, rgba(147,206,222,1) 0%, rgba(117,189,209,1) 41%, rgba(73,165,191,1) 100%);
+    background: linear-gradient(to right, rgba(147,206,222,1) 0%, rgba(117,189,209,1) 41%, rgba(73,165,191,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#93cede', endColorstr='#49a5bf', GradientType=1 );
+}
+
+.textRootNode {
+    text-align: center;
+    font-weight: bold;
+    font-size: 22px;
+    color: #333;
+}
+
+.level1 {
+    margin: 10px;
+    display:block;
+}
+
+.level15 {
+    background: #fff59d;
+    border: 0px solid #ffeb3b;
+    margin: 10px 0 5px 0;
+    /*display: flex;*/
+    border-radius:2px;
+    padding:5px;
+    /*-webkit-box-shadow: 0px 0px 3px 0px rgba(50, 50, 50, 0.75);
+-moz-box-shadow:    0px 0px 3px 0px rgba(50, 50, 50, 0.75);
+box-shadow:         0px 0px 3px 0px rgba(50, 50, 50, 0.75);*/
+}
+
+.Image1{
+    float: right;
+    min-width: 38px;
+}
+
+.textVertical{
+    width:10px;
+    word-wrap: break-word;
+    text-align:center;
+    text-transform:uppercase;
+}
+
+.textLevel {
+    text-align: center;
+    float:left;
+    width:100%;
+    word-wrap:break-word;
+    font-size:16px;
+}
+
+.level2 {
+    font-weight: bold;
+    color: #333;
+    float:right;
+    width: 100%;
+    text-align: center;
+    display:flex;
+    flex-wrap:wrap;
+    align-items: stretch;
+    box-sizing:border-box;
+    padding:0;
+}
+
+.level3 {
+    background-color:#ffcc80;
+    border:2px solid #ffb74d;
+    font-weight: bold;
+    color: #222;
+    margin:5px 0 5px 0px;
+    width:100%;
+    border-radius:3px;
+    padding:5px;
+    font-size:16px;
+   /*-webkit-box-shadow: 0px 0px 6px 0px rgba(50, 50, 50, 0.55);
+-moz-box-shadow:    0px 0px 6px 0px rgba(50, 50, 50, 0.55);
+box-shadow:         0px 0px 5px 0px rgba(50, 50, 50, 0.65);*/
+}
+
+.layer3 {
+    margin: 0px;
+    min-width:100px;
+    border-radius:2px;
+    padding-right:10px;
+    align-items: stretch;
+    display:flex;
+}
+
+
+.Image {
+    float:right;
+    width:30px;
+    height:30px;
+    padding:2px;
+}
+
+.progress {
+    height: 25px;
+    margin-bottom: 25px;
+}
+.progress .bar {
+    height: 25px;
+}
+.divprogress{
+     -webkit-transition: width 2.6s ease;
+    -moz-transition: width 2.6s ease;
+    -ms-transition: width 2.6s ease;
+    -o-transition: width 2.6s ease;
+    transition: width 2.6s ease;
+}
+
+.progress-sm{
+    height: 8px;
+    margin-bottom: 8px;
+}
+.bar-sm{
+    height: 8px;
+}
+
+.progress-bar-yellow{
+    background-color: rgba(237, 206, 35, 1); 
+    background-color: #FFcc00;
+}
+
+DATA ACCESS (MODEL).
+
+   // PERCENTOBJECT - OBJECT COMPOSE BY AVERAGE PERCENT AND WEIGHT OF THIS PERCENT.
+   // GET PERCENT (average and weight) BY THE SAME VALUES COMING FROM THE NEXT LEVEL.
+       public static List<PercentObject> getPercentLowerLeves(List<PercentObject> percent, List<Node> current, List<ENodo> children)
+        {
+            List<PercentObject> resul = new List<PercentObject>();
+// GO TROUGHT TO THE LEVEL, USING VALUES COMING FROM CHILDREN LEVEL BY CHILDREN NODE PER FATHER. RECOVER AVERAGE AND WEIGHT AND 
+// CALCULATES THE NEW AVERAGE AND WEIGHT FOR THE FATHER.
+            for (int i = 0; i < current.Count; i++)
+            {
+                int totalPercent = 0;
+                int numberTest = 0;
+                List<Exam> pruebasNodo = new List<Exam>();
+                PercentObject objTemp = new PercentObject();
+                bool control = false;
+                for (int j = 0; j < children.Count; j++)
+                {
+                    if (actual[i].idNode == hijos[j].idFatherNode)
+                    {
+                        if (percent[j].numberTest != -1)
+                        {
+                            totalPercent += percent[j].averagePercent * percent[j].numberTest;
+                            numberTest += porcentajeTemp[j].numberTest;
+                        }
+                        control = true;
+                    }
+                }
+
+// IF NODE (current) HASN´T CHILDREN MEANS IS A NODE-LEAF. WE MUST TO CALCULATES AVERAGE AND WEIGHT DIRECTLY.
+                if (!control)
+                {
+                    objTemp.averagePercent = Node.getPercent(new List<Node> { actual[i] })[0].averagePercent;
+                    numberTest = Node.getPercent(new List<Node> { actual[i] })[0].numberTest;
+                }
+
+// NODE IS NOT LEAF, BUT HE HAS TEST PENDING FOR HIS CHILDREN.
+                if ((numberTest != -1) && (control))
+                {
+                    objTemp.averagePercent = totalPercent / numberTest;
+                }
+  // NODE IS NOT LEAF, BUT HE HASN´T TEST PENDING FOR HIS CHILDREN.
+                else if ((numberTest == -1) && (control))
+                {
+                    objTemp.averagePercent = 0;
+                }
+
+                objTemp.numberTest = numberTest;
+                resul.Add(objTemp);
+            }
+            return resul;
+        }
+
+  // GET percentObject CALCULATING, DIRECTLY, THE AVERAGE AND WEIGHT COMING FROM TEXT PENDING FROM EACH NODE.
+        public static List<PercentObject> getPercent(List<ENodo> level)
+        {
+            List<PercentObject> resultados = new List<PercentObject>();
+
+            foreach (Node node in level)
+            {
+                PercentObject temp = new PercentObject();
+                List<Exam> pruebasNodo = node.getTest().ToList();
+
+                int pass = 0;
+                int fails = 0;
+                int total = 0;
+
+                if (pruebasNodo.Count > 0)
+                {
+                    foreach (Exam exam in pruebasNodo)
+                    {
+                        if (((material.Results.Where(n => n.Zone == Enums.Zone.Zone1).Count() > 0)) && ((material.Results.Where(n => n.Zone == Enums.Zone.Zone1).First().Note) >= 75))
+                        {
+                            pass++;
+                        }
+                        else if (((material.Resultados.Where(n => n.Zona == Enums.Zona.MeritosPersonales).Count() > 0)) && ((material.Resultados.Where(n => n.Zona == Enums.Zona.MeritosPersonales).First().Puntuacion) < 75))
+                        {
+                            fails++;
+                        }
+                    }
+
+
+                    total = pass + fails;
+                    if (total > 0)
+                    {
+                        temp.averagePercent = Decimal.ToInt32(Decimal.Divide(pass, (total)) * 100);
+                        temp.numberTest = total;
+                        resultados.Add(temp);
+                    }
+                }
+                else
+                {
+  // IF TOTAL = 0, MEANS THIS NODE DOESN´T HAVE TEXT PENDING FROM HIM. RETURNS -1 TO DIFFERENTIATE OF A NODE WITH averagePercent
+  // 0, BUT WITH A NUMBER OF TEST HIGHER 1,
+                    temp.averagePercent = 0;
+                    temp.numberTest = -1;
+                    resultados.Add(temp);
+                }
+            }
+
+            return resultados;
+        }
+        
+        
+VIEWMODEL.
+  
+        public Node nodoR { get; set; }
+        public List<percentObject> nodeRootPercent { get; set; }
+
+        public List<Node> childre1 { get; set; }
+        public List<percentObject> children1Percent { get; set; }
+
+        public List<Node> hijos2 { get; set; }
+        public List<percentObject> children2Percent { get; set; }
+
+        public List<Node> children3 { get; set; }
+        public List<percentObject> children3Percent { get; set; }
+
+        public VM(Node nodeRoot)
+        {
+            Entity entity = new Entity();
+
+//nodeRoot IS COMING FROM THE CONTROLLER (BUSINESS LOGIC)
+            nodoR = nodeRoot;
+
+// CONVERT NODE ROOT TO A LIST FROM USING, DIRECTLY, THE FUNCTION GETPERCENTLOWERLEVEL
+            List<Node> nodeRList = new List<Node> { nodoR };
+// getChildrenLevel, RECOVER, FOR EACH NODE OF THE IN LEVEL, HIS CHILDREN (ASKING TO DATABASE BY ENTITY). CONCATENATES ALL
+// OF THEM IN A RESULT NODE LIST.
+            children1 = Node.getChildrenLevel(nodoR.idNode);
+            children2 = Node.getChildrenLevel(children1);
+            children3 = Node.getChildrenLevel(children2);
+
+            children3Percent = Node.getPercent(children3);
+            children2Percent = Node.getPercentLowerLevel(children3Percent, children2, children3);
+            children1Percent = Node.getPercentLowerLevel(children2Percent, children1, children2);
+            nodeRootPercent = Node.getPercentLowerLevel(children1Percent, nodoRList, children1);
+        }  

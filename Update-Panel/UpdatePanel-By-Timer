@@ -1,0 +1,42 @@
+FRONT.
+
+      <form id="form1" runat="server">
+      <div>
+        <asp:ScriptManager ID="ScriptManager1" runat="server">
+        </asp:ScriptManager>
+        <table>
+            <tr>
+                	<td>
+                    <span>Hora Real Actualizada cada segundo</span>
+                  </td>
+            </tr>
+            <tr>
+                	<td>
+                    <asp:Timer ID="Timer1" runat="server" Interval="1000">
+                    </asp:Timer>
+                    <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
+                    <ContentTemplate>
+                    <asp:Label ID="lblHora" runat="server" Text=" "></asp:Label>                  
+                    </ContentTemplate>
+                  <Triggers>
+                    <asp:AsyncPostBackTrigger ControlID="Timer1" EventName="Tick" />
+                  </Triggers>
+                 </asp:UpdatePanel>
+                 <asp:UpdateProgress ID="UpdateProgress1" runat="server">
+                    <ProgressTemplate>
+                      <img alt="" src="img/progress.gif"/> 
+             	            Actualizando…
+                    </ProgressTemplate>
+                 </asp:UpdateProgress>
+                </td>
+            </tr>
+        </table>  
+     </div>
+     </form>
+
+SERVER.
+
+    protected void Timer1_Tick(object sender, EventArgs e)
+    {
+        this.lblHora.Text = DateTime.Now.ToShortTimeString();    
+    }

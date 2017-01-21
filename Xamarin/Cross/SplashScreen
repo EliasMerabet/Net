@@ -1,0 +1,22 @@
+            Button startButton = new Button() { Image = "splashlogo.png", BackgroundColor = Xamarin.Forms.Color.Transparent, HorizontalOptions = Xamarin.Forms.LayoutOptions.Center, Scale = 3.5};
+
+            startButton.Clicked += async (object sender, EventArgs e) =>
+            {
+                var parentAnimation = new Animation();
+                var scaleUpAnimation = new Animation(v => startButton.Scale = v, 1, 2, Easing.SpringIn);
+                var rotateAnimation = new Animation(v => startButton.Rotation = v, 0, 360);
+                var scaleDownAnimation = new Animation(v => startButton.Scale = v, 2, 1, Easing.SpringOut);
+
+                parentAnimation.Add(0, 0.5, scaleUpAnimation);
+                parentAnimation.Add(0, 1, rotateAnimation);
+                parentAnimation.Add(0.5, 1, scaleDownAnimation);
+
+                parentAnimation.Commit(startButton, "ChildAnimations", 16, 4000, null);
+                await Task.Delay(5000);
+                await App.Current.MainPage.Navigation.PushModalAsync(new Login());
+            };
+
+		        public static async Task Sleep(int ms)
+        	  {
+            		await Task.Delay(ms);
+        	  }

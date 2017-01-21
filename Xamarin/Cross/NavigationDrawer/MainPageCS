@@ -1,0 +1,58 @@
+XAML.
+
+<MasterDetailPage xmlns="http://xamarin.com/schemas/2014/forms"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                  xmlns:local="clr-namespace:NAMESPACE;assembly=NAMESPACE"
+                  x:Class="NAMESPACE.MainPage">
+  
+  <MasterDetailPage.Master>
+    <local:MasterPage x:Name="masterPage" />
+  </MasterDetailPage.Master>
+  <MasterDetailPage.Detail>
+    <NavigationPage>
+      <x:Arguments>
+        <local:ContactsPage />
+      </x:Arguments>
+    </NavigationPage>
+  </MasterDetailPage.Detail>
+  
+</MasterDetailPage>
+
+XAML.CS.
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+using Xamarin.Forms;
+
+namespace NAMESPACE
+{
+    public class MainPageCS : MasterDetailPage
+    {
+        MasterPageCS masterPage;
+
+        public MainPageCS(int id)
+        {
+            masterPage = new MasterPageCS(id);
+            Master = masterPage;
+            var model = new MODEL();
+            var identificador = model[id].Nombre;
+            Detail = new NavigationPage(new Intervection(identificador));
+            masterPage.ListView.ItemSelected += OnItemSelected;
+        }
+
+        void OnItemSelected(object sender, SelectedItemChangedEventArgs e)
+        {
+            var item = e.SelectedItem as MasterPageItem;
+            if (item != null)
+            {
+                Detail = new NavigationPage((Page)Activator.CreateInstance(item.TargetType, item.Title));
+                masterPage.ListView.SelectedItem = null;
+                IsPresented = false;
+            }
+        }
+    }
+}

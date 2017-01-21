@@ -1,0 +1,224 @@
+VIEW (Index).
+@{
+    ViewBag.Title = "Doctores";
+}
+
+@using Doctor.Models;
+@model List<DOCTOR>
+
+<h2>Doctores</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Codigo Doctor</th>
+            <th>Apellido</th>
+            <th>Especialidad</th>
+            <th>Codigo Hospital</th>
+            <th>Accion</th>
+        </tr>
+    </thead>
+    <tbody>
+       @foreach (DOCTOR doc in Model)
+        {
+            <tr>
+                <td>@doc.DOCTOR_NO</td>
+                <td>@doc.APELLIDO</td>
+                <td>@doc.ESPECIALIDAD</td>
+                <td>@doc.HOSPITAL_COD</td>
+                <td>
+                    @Html.ActionLink("Borrar", "Destroy", "Doctores", new { dn = @doc.DOCTOR_NO }, null)
+                    @Html.ActionLink("Editar", "Edit", "Doctores", new { dn = @doc.DOCTOR_NO }, null)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@Html.ActionLink("Nuevo", "New", "Doctores")
+
+VIEW (Insert).
+@{
+    ViewBag.Title = "Nuevo departamento";
+}
+
+<h2>Nuevo departamento</h2>
+
+@using (Html.BeginForm("Create", "Doctores", FormMethod.Post))
+{
+    <ul>
+        <li>
+            <label for="dn">Doctor No</label>
+            <input type="text" name="dn" />
+        </li>
+        <li>
+            <label for="ape">Apellido</label>
+            <input type="text" name="ape" />
+        </li>
+        <li>
+            <label for="esp">Especialidad</label>
+            <input type="text" name="esp" />
+        </li>
+        <li>
+            <label for="hc">Hospital Cod</label>
+            <input type="text" name="hc" />
+        </li>
+    </ul>
+
+    <input type="submit" value="Insertar" />
+}
+
+VIEW (Edit).
+@{
+    ViewBag.Title = "Modificar Doctor";
+}
+
+@using Doctor.Models
+@model DOCTOR
+
+<h2>Modificar Doctor</h2>
+
+@using (Html.BeginForm("Update", "Doctores", FormMethod.Post))
+{
+    <ul>
+        <li>
+            <label>Doctor NO</label>
+            <input type="text" name="dn" value="@Model.DOCTOR_NO" />
+        </li>
+        <li>
+            <label for="esp">Especialidad</label>
+            <input type="text" name="esp" value="@Model.ESPECIALIDAD" />
+        </li>
+        <li>
+            <label for="hc">Hospital Cod</label>
+            <input type="text" name="hc" value="@Model.HOSPITAL_COD" />
+        </li>
+    </ul>
+
+    <input type="submit" value="Modificar" />
+}
+
+MODEL.
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+namespace Doctor.Models
+{
+    public class ModeloDoctores
+    {
+
+        DoctorDataContext contexto = new DoctorDataContext();
+
+        public List<DOCTOR> mostrarDoctores()
+        {
+            var consultaDoctores = from d in contexto.DOCTOR
+                                   select d;
+
+
+            return consultaDoctores.ToList();
+        }
+
+        public void altaDoctor (String dn, String ape, String esp, String hc)
+        {
+            DOCTOR d = new DOCTOR();
+            d.APELLIDO = ape;
+            d.DOCTOR_NO = dn;
+            d.ESPECIALIDAD = esp;
+            d.HOSPITAL_COD = hc;
+
+            contexto.DOCTOR.InsertOnSubmit(d);
+            contexto.SubmitChanges();
+        }
+
+        public void modificarDoctor(String dn, String esp, String hc)
+        {
+            DOCTOR doc = (from d in contexto.DOCTOR
+                          where d.DOCTOR_NO == dn
+                          select d).First();
+
+            doc.ESPECIALIDAD = esp;
+            doc.HOSPITAL_COD = hc;
+            contexto.SubmitChanges();
+        }
+
+        public DOCTOR editarDoctor(String dn)
+        {
+            DOCTOR doc = (from d in contexto.DOCTOR
+                        where d.DOCTOR_NO == dn
+                           select d).First();
+        // DO YOUR STUFF.
+            return doc;
+        } 
+
+        public void eliminarDoctor(String dn)
+        {
+            DOCTOR doc = (from d in contexto.DOCTOR
+                          where d.DOCTOR_NO == dn
+                          select d).First();
+
+            contexto.DOCTOR.DeleteOnSubmit(doc);
+            contexto.SubmitChanges();
+        }
+
+    }
+}
+
+CONTROLLER.
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using Doctor.Models;
+
+namespace Doctor.Controllers
+{
+    public class DoctoresController : Controller
+    {
+        // GET: Doctores
+        public ActionResult Index()
+        {
+            ModeloDoctores md = new ModeloDoctores();
+            List<DOCTOR> lista = md.mostrarDoctores();
+            return View(lista);
+        }
+
+        public ActionResult New()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult Create(String dn, String ape, String esp, String hc)
+        {
+            ModeloDoctores md = new ModeloDoctores();
+            md.altaDoctor(dn, ape, esp, hc);
+            return RedirectToAction("Index");
+        }
+
+        public ActionResult Edit(String dn)
+        {
+            ModeloDoctores md = new ModeloDoctores();
+            DOCTOR d = md.editarDoctor(dn);
+            return View(d);
+        }
+
+        [HttpPost]
+        public ActionResult Update(String dn, String esp, String hc)
+        {
+            ModeloDoctores md = new ModeloDoctores();
+            md.modificarDoctor(dn, esp, hc);
+            return RedirectToAction("Index");
+        }
+
+        public ActionResult destroy(String dn)
+        {
+            ModeloDoctores md = new ModeloDoctores();
+            md.eliminarDoctor(dn);
+            return RedirectToAction("Index");
+        }
+
+    }
+}

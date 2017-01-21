@@ -1,0 +1,136 @@
+CS.
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Data.SqlClient;
+using System.Data;
+
+public partial class _Default : System.Web.UI.Page
+{
+    static string cadena = "Data Source=.;Initial Catalog=Hospital;Persist Security Info=True;User ID=sa";
+    SqlDataAdapter Ad = new SqlDataAdapter("Select Apellido, Oficio, Fecha_alt from Emp", cadena);
+    DataSet Ds = new DataSet();
+    DataView Dv;
+
+
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        if (this.IsPostBack == true) return;
+
+        this.Calendar1.VisibleDate = new DateTime(1982, 01, 01);
+        this.Calendar2.VisibleDate = DateTime.Now;
+        this.Calendar1.SelectedDate = new DateTime(1982, 01, 01);
+        this.Calendar2.SelectedDate = DateTime.Now;
+
+    }
+
+    protected void Button1_Click(object sender, EventArgs e)
+    {
+        DateTime FechaIni, FechaFin;
+        FechaIni = this.Calendar1.SelectedDate;
+        FechaFin = this.Calendar2.SelectedDate;
+
+        Ad.Fill(Ds, "Emp");
+        Dv = Ds.Tables["Emp"].DefaultView;
+        Dv.RowFilter = "Fecha_alt >= '" + FechaIni +
+        "' and Fecha_alt <= '" + FechaFin + "'";
+        this.GridView1.DataSource = Dv;
+        this.GridView1.DataBind();
+
+    }
+}
+
+ASPX.
+<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="_Default" %>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+    <style type="text/css">
+        .auto-style1 {
+            width: 100%;
+        }
+        .auto-style2 {
+            width: 248px;
+        }
+        .auto-style3 {
+            width: 272px;
+        }
+        .auto-style4 {
+            margin-left: 0px;
+        }
+    </style>
+</head>
+<body>
+    <form id="form1" runat="server">
+    <div>
+    
+    </div>
+        <table class="auto-style1">
+            <tr>
+                <td class="auto-style2">
+                    <asp:Calendar ID="Calendar1" runat="server" BackColor="White" BorderColor="#999999" CellPadding="4" DayNameFormat="Shortest" Font-Names="Verdana" Font-Size="8pt" ForeColor="Black" Height="180px" Width="200px">
+                        <DayHeaderStyle BackColor="#CCCCCC" Font-Bold="True" Font-Size="7pt" />
+                        <NextPrevStyle VerticalAlign="Bottom" />
+                        <OtherMonthDayStyle ForeColor="#808080" />
+                        <SelectedDayStyle BackColor="#666666" Font-Bold="True" ForeColor="White" />
+                        <SelectorStyle BackColor="#CCCCCC" />
+                        <TitleStyle BackColor="#999999" BorderColor="Black" Font-Bold="True" />
+                        <TodayDayStyle BackColor="#CCCCCC" ForeColor="Black" />
+                        <WeekendDayStyle BackColor="#FFFFCC" />
+                    </asp:Calendar>
+                </td>
+                <td class="auto-style3">
+                    <asp:Button ID="Button1" runat="server" OnClick="Button1_Click" Text="Button" />
+                </td>
+                <td>
+                    <asp:Calendar ID="Calendar2" runat="server" BackColor="White" BorderColor="#3366CC" BorderWidth="1px" CellPadding="1" CssClass="auto-style4" DayNameFormat="Shortest" Font-Names="Verdana" Font-Size="8pt" ForeColor="#003399" Height="200px" Width="220px">
+                        <DayHeaderStyle BackColor="#99CCCC" ForeColor="#336666" Height="1px" />
+                        <NextPrevStyle Font-Size="8pt" ForeColor="#CCCCFF" />
+                        <OtherMonthDayStyle ForeColor="#999999" />
+                        <SelectedDayStyle BackColor="#009999" Font-Bold="True" ForeColor="#CCFF99" />
+                        <SelectorStyle BackColor="#99CCCC" ForeColor="#336666" />
+                        <TitleStyle BackColor="#003399" BorderColor="#3366CC" BorderWidth="1px" Font-Bold="True" Font-Size="10pt" ForeColor="#CCCCFF" Height="25px" />
+                        <TodayDayStyle BackColor="#99CCCC" ForeColor="White" />
+                        <WeekendDayStyle BackColor="#CCCCFF" />
+                    </asp:Calendar>
+                </td>
+            </tr>
+            <tr>
+                <td class="auto-style2">&nbsp;</td>
+                <td class="auto-style3">
+                    <asp:GridView ID="GridView1" runat="server" BackColor="#DEBA84" BorderColor="#DEBA84" BorderStyle="None" BorderWidth="1px" CellPadding="3" CellSpacing="2" Width="217px">
+                        <FooterStyle BackColor="#F7DFB5" ForeColor="#8C4510" />
+                        <HeaderStyle BackColor="#A55129" Font-Bold="True" ForeColor="White" />
+                        <PagerStyle ForeColor="#8C4510" HorizontalAlign="Center" />
+                        <RowStyle BackColor="#FFF7E7" ForeColor="#8C4510" />
+                        <SelectedRowStyle BackColor="#738A9C" Font-Bold="True" ForeColor="White" />
+                        <SortedAscendingCellStyle BackColor="#FFF1D4" />
+                        <SortedAscendingHeaderStyle BackColor="#B95C30" />
+                        <SortedDescendingCellStyle BackColor="#F1E5CE" />
+                        <SortedDescendingHeaderStyle BackColor="#93451F" />
+                    </asp:GridView>
+                </td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td class="auto-style2">&nbsp;</td>
+                <td class="auto-style3">&nbsp;</td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td class="auto-style2">&nbsp;</td>
+                <td class="auto-style3">&nbsp;</td>
+                <td>&nbsp;</td>
+            </tr>
+        </table>
+    </form>
+</body>
+</html>

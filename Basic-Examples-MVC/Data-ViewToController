@@ -1,0 +1,40 @@
+VIEW POST.
+
+@{
+    ViewBag.Title = "VistaPost";
+}
+
+<h2>VistaPost</h2>
+<form method="post">
+    <h4>Introduzca los datos de su vehículo</h4>
+    <table border="1">
+        <tr>
+            <th>Marca</th>
+            <td>
+                <input type="text" name="Marca" />
+            </td>
+        </tr>
+        <tr>
+            <th>Modelo</th>
+            <td>
+                <input type="text" name="Modelo" />
+            </td>
+        </tr>
+
+    </table>
+</form>
+
+CONTROLLER.
+        public ActionResult VistaPost()
+        {
+            return View();
+        }
+
+
+        [HttpPost]
+        public ActionResult VistaPost(Coche c)
+        {
+            ViewBag.Marca = c.Marca;
+            ViewBag.Modelo = c.Modelo;
+            return View();
+        }

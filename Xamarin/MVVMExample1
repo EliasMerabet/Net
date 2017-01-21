@@ -1,0 +1,81 @@
+XAML.
+
+
+  <StackLayout>
+    <Entry Text="{ Binding Nombre }" TextColor="Black" BackgroundColor="Yellow"/>
+
+    <ListView x:Name="sa" ItemsSource="{ Binding I1 }" VerticalOptions="Center" HorizontalOptions="Center">
+      <ListView.ItemTemplate>
+        <DataTemplate>
+          <ViewCell>
+            <Label Text="{ Binding Nombre }" TextColor="Black" BackgroundColor="Blue"/>
+          </ViewCell>
+        </DataTemplate>
+      </ListView.ItemTemplate>
+    </ListView>
+  </StackLayout>
+</ContentPage>
+
+XAML.CS.
+
+    public partial class Page1 : ContentPage
+    {
+        public Page1()
+        {
+            var p = new I_VM();
+            BindingContext = p;
+            InitializeComponent();
+        }
+    }
+
+I_VM.
+
+    public class I_VM : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void RaiseOnPropertyChange([CallerMemberName] string propertyName = null)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        public I_VM()
+        {
+            i = new IM();
+            I1 = i.I;
+            Nombre = i.I[0].Nombre;
+        }
+
+        private List<Is> _i1;
+
+        public List<Is> I1
+        {
+            get { return _i1; }
+            set { _i1 = value;  RaiseOnPropertyChange(); }
+        }
+
+        private IM i;
+
+        private string _nombre;
+        public string Nombre
+        {
+            get { return _nombre; }
+            set { _nombre = value; RaiseOnPropertyChange(); }
+        }
+
+IM.
+
+    public class IM
+    {
+        public List<Is> I { get; set; }
+}
+
+I.
+
+public class Is
+    {
+        public string Nombre { get; set; }
+}

@@ -1,0 +1,81 @@
+FRONT.
+
+<form id="form1" runat="server">
+    <div>
+        <asp:ScriptManager ID="ScriptManager1" runat="server">
+        </asp:ScriptManager>
+        <asp:Button ID="Button1" runat="server" Text="Mostrar Hora Corta" />
+        <asp:Button ID="Button2" runat="server" Text="Mostrar Hora Larga"  />
+        <asp:Button ID="Button3" runat="server" Text="Mostrar Fecha"  />  
+    </div>
+    <br />
+    <table>
+        <tr>
+            <td>
+                <asp:Label ID="Label1" runat="server" Text="Hora Corta"></asp:Label>
+            </td>
+            <td>
+                <asp:Label ID="Label2" runat="server" Text="Hora Larga" ></asp:Label>
+            </td>
+            <td>
+                <asp:Label ID="Label3" runat="server" Text="Fecha"></asp:Label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                 <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
+                <ContentTemplate>
+                <asp:Label ID="lblHoraC" runat="server" Text="  "></asp:Label>
+                </ContentTemplate>
+                     <Triggers>
+                         <asp:AsyncPostBackTrigger ControlID="Button1" EventName="Click" />
+                     </Triggers>
+                </asp:UpdatePanel> 
+         
+            </td>
+            <td>
+                <asp:UpdatePanel ID="UpdatePanel2" runat="server" UpdateMode="Conditional"> 
+                   <ContentTemplate>
+                       <asp:Label ID="lblHoraL" runat="server" Text="  "></asp:Label>
+                   </ContentTemplate>
+                   <Triggers>
+                      <asp:AsyncPostBackTrigger ControlID="Button2" EventName="Click" />
+                   </Triggers>
+                </asp:UpdatePanel>
+                
+            </td>
+            <td>
+            <asp:UpdatePanel ID="UpdatePanel3" runat="server" UpdateMode="Conditional"> 
+                           <ContentTemplate>
+                <asp:Label ID="lblFecha" runat="server" Text="  "></asp:Label>
+                </ContentTemplate>
+                               <Triggers>
+                                   <asp:AsyncPostBackTrigger ControlID="Button3" EventName="Click" />
+                               </Triggers>
+            </asp:UpdatePanel>
+            </td>
+        </tr>
+    </table>
+    </form>
+
+SERVER.
+
+  protected void Button1_Click(object sender, EventArgs e)
+    {
+        this.lblHoraC.Text = DateTime.Now.ToShortTimeString();
+        this.lblHoraL.Text = DateTime.Now.ToLongTimeString();
+        this.lblFecha.Text = DateTime.Now.ToString();
+
+    }
+  protected void Button2_Click(object sender, EventArgs e)
+    {
+        this.lblHoraC.Text = DateTime.Now.ToShortTimeString();
+        this.lblHoraL.Text = DateTime.Now.ToLongTimeString();
+        this.lblFecha.Text = DateTime.Now.ToString();
+    }
+  protected void Button3_Click(object sender, EventArgs e)
+    {
+        this.lblHoraC.Text = DateTime.Now.ToShortTimeString();
+        this.lblHoraL.Text = DateTime.Now.ToLongTimeString();
+        this.lblFecha.Text = DateTime.Now.ToString();
+    }

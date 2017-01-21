@@ -1,0 +1,143 @@
+VIEW (Index).
+@{
+    ViewBag.Title = "Index";
+}
+
+@using Carrito.Models
+@model List<Peliculas>
+
+<h2>Index</h2>
+
+@using (Html.BeginForm("Index", "Peliculas", FormMethod.Post))
+{
+    <table>
+        <thead>
+            <tr>
+                <th colspan="2">Título</th>
+                <th>Precio</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Peliculas pelicula in Model)
+            {
+                <tr>
+                    <td>
+                        <input type="checkbox" value="@pelicula.Id" name="ids" />
+                    </td>
+                    <td>
+                        @pelicula.Nombre
+                    </td>
+                    <td>
+                       10 €
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <p>
+        @for (int i = 0; i < ViewBag.Pages; i++)
+        {
+            @Html.ActionLink((@i + 1).ToString(), "Index", "Peliculas", new { page = @i }, null)
+        }
+    </p>
+
+    <input type="submit" value="Seleccionar" />
+    @Html.ActionLink("Ver Carrito", "Show", "Peliculas")
+}
+
+VIEW (Show).
+@{
+    ViewBag.Title = "Carrito de la Compra";
+}
+
+@using Carrito.Models
+@model List<Peliculas>
+
+<h2>Carrito de la Compra</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th></th>
+            <th>Titulo</th>
+            <th>Precio</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Peliculas pelicula in Model)
+        {
+            <tr>
+                <td><img src="/Images/Covers/@pelicula.Foto" width="90" /></td>
+                <td>@pelicula.Nombre</td>
+                <td>10 €</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<p>
+    Precio total: @Model.Aggregate(0, (acc, x) => acc + 10) €
+</p>
+
+@Html.ActionLink("Volver", "Index", "Peliculas")
+
+CONTROLLER.
+ public class PeliculasController : Controller
+    {
+        //DEBERIA ACCEDER A LA BBDD DESDE EL MODELO, NO DESDE EL CONTROLADOR.
+        VideoclubDataContext context = new VideoclubDataContext();
+        private int PageSize = 5;
+
+        public ActionResult Index(int? page)
+        {
+            if (page == null)
+            {
+                page = 0;
+            }
+
+            ViewBag.Pages = (from pelicula in context.Peliculas select pelicula).Count() / PageSize;
+
+            List<Peliculas> peliculas = (from pelicula in context.Peliculas
+                                        orderby pelicula.Nombre
+                                        select pelicula).
+                                        Skip(page.Value * PageSize).
+                                        Take(PageSize).
+                                        ToList();
+
+            return View(peliculas);
+        }
+
+        [HttpPost]
+        public ActionResult Index(int[] ids)
+        {
+            if (ids == null)
+            {
+                ids = new int[] { };
+            }
+
+            if (Session["ids"] == null)
+            {
+                Session["ids"] = new int[] { };
+            }
+
+            int[] oldIds = (int[])Session["ids"];
+
+            Session["ids"] = ids.Union(oldIds).ToArray();
+
+            return RedirectToAction("Index");
+        }
+
+        public ActionResult Show()
+        {
+            int[] ids = Session["ids"] == null ? new int[] { } : (int[])Session["ids"];
+            List<int> ids1 = ids.ToList();
+
+            List<Peliculas> peliculas = (from pelicula in context.Peliculas
+                                        where ids1.Contains(pelicula.Ids)
+                                        select pelicula).ToList();
+
+            return View(peliculas);
+        }
+
+    }

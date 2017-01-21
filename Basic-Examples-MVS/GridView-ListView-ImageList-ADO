@@ -1,0 +1,71 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+using System.Data.SqlClient;
+
+namespace DataGridView
+{
+    public partial class Form1 : Form
+    {
+
+        static string cadena = "Data Source=.;Initial Catalog=HOSPITAL;Integrated Security=True";
+        SqlDataAdapter AdDept = new SqlDataAdapter("Select DEPT_NO,DNombre as [DEPARTAMENTO],Loc as [LOCALIDAD] from DEPT", cadena);
+        SqlDataAdapter AdEmp = new SqlDataAdapter("Select APELLIDO,OFICIO,SALARIO,DEPT_NO from EMP", cadena);
+        DataSet Ds = new DataSet();
+
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            AdDept.Fill(Ds, "Dept");
+            AdEmp.Fill(Ds, "Emp");
+            this.dataGridView1.ReadOnly = true;
+            this.dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            this.listView1.SmallImageList = imageList1;
+            this.listView1.View = View.Details;
+            this.listView1.FullRowSelect = true;
+            this.listView1.GridLines = true;
+
+            for (short i = 0; i <= Ds.Tables["Emp"].Columns.Count - 1; i++)
+            {
+                this.listView1.Columns.Add(Ds.Tables["Emp"].Columns[i].ColumnName, this.listView1.Width / 4, HorizontalAlignment.Center);
+            }
+
+            Ds.Relations.Add("Dept_Emp", Ds.Tables["Dept"].Columns["Dept_no"], Ds.Tables["Emp"].Columns["Dept_no"]);
+
+            this.dataGridView1.DataSource = Ds;
+            this.dataGridView1.DataMember = "Dept";
+            dataGridView1_Click(sender, e);
+
+        }
+
+        private void dataGridView1_Click(object sender, EventArgs e)
+        {
+            DataRow Fila;
+            DataRow[] Registros;
+            ListViewItem Elem;
+
+            this.listView1.Items.Clear();
+            Fila = Ds.Tables["Dept"].Rows[this.dataGridView1.CurrentRow.Index];
+  
+            Registros = Fila.GetChildRows("Dept_Emp");
+
+            for (short i = 0;i<=Registros.GetUpperBound(0);i++){
+              Elem = new ListViewItem();
+              Elem.ImageIndex = 0;
+              Elem.Text = Registros[i]["APELLIDO"].ToString();
+              Elem.SubItems.Add(Registros[i]["OFICIO"].ToString(), Color.Blue, Color.Yellow, this.Font);
+              Elem.SubItems.Add(Registros[i]["SALARIO"].ToString());
+              Elem.SubItems.Add(Registros[i]["DEPT_NO"].ToString());
+              this.listView1.Items.Add(Elem);
+
+        }
+}

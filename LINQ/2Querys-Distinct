@@ -1,0 +1,23 @@
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            var datos = (from p in contexto.EMP
+                         select p.OFICIO).Distinct();
+
+            this.comboBox1.DataSource = datos;
+            this.comboBox1.DisplayMember = "oficio";
+            //this.cmbOficios.ValueMember Podríamos usar el value si quisieramos devolver otro valor distinto
+
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string datooficio = this.comboBox1.SelectedValue.ToString();
+
+            var datos = from p in contexto.EMP
+                        where p.OFICIO == datooficio
+                        select new { p.APELLIDO, p.OFICIO, p.FECHA_ALT, p.SALARIO, p.COMISION };
+
+            this.dataGridView1.DataSource = datos;
+            this.dataGridView1.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
+
+        }

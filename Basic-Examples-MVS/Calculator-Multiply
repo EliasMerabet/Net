@@ -1,0 +1,53 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+
+namespace MVS2_MatricesControl
+{
+    public partial class Form2 : Form
+    {
+
+        Button[] botones;
+        Label[] labels;
+
+        public Form2()
+        {
+            InitializeComponent();
+        }
+
+        private void Form2_Load(object sender, EventArgs e)
+        {
+            botones = new Button[] { button1, button2, button3, button4, button5, button6, button7, button8, button9 };
+            labels = new Label[] { label1, label2, label3, label4, label5, label6, label7, label8, label9 };
+
+            for (int i = 0; i < botones.Length; i++)
+            {
+                botones[i].Click += new EventHandler(this.multiplicar);
+                botones[i].Text = (i+1).ToString();
+                labels[i].Text = (i+1).ToString();
+            }
+        }
+
+        private void multiplicar(object sender, EventArgs e){
+
+            Button b;
+            b = (Button) (sender);
+            int j = int.Parse(b.Text);
+            textBox1.Text =  (1 * j).ToString();
+            textBox2.Text = (2 * j).ToString();
+            textBox3.Text = (3 * j).ToString();
+            textBox4.Text = (4 * j).ToString();
+            textBox5.Text = (5 * j).ToString();
+            textBox6.Text = (6 * j).ToString();
+            textBox7.Text = (7 * j).ToString();
+            textBox8.Text = (8 * j).ToString();
+            textBox10.Text = (9 * j).ToString();
+        }
+
+    }
+}

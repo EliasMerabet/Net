@@ -1,0 +1,2 @@
+settings.SettingsCommandButton.DeleteButton.ButtonType = GridCommandButtonSettings.Image;
+settings.SettingsCommandButton.DeleteButton.Image.Url = "~/content/images/icons/icon_delete.png";

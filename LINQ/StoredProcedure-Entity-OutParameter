@@ -1,0 +1,49 @@
+private void Form1_Load(object sender, EventArgs e)
+        {
+
+            var datosTurno = (from t in contexto.PLANTILLA
+                              select t.T).Distinct();
+
+            foreach (var t in datosTurno)
+            {
+                this.comboBox1.Items.Add(t);
+            }
+
+            var datosPlantilla = from p in contexto.PLANTILLA
+                                 select p.APELLIDO;
+
+            foreach (var ape in datosPlantilla)
+            {
+                this.listBox1.Items.Add(ape);
+            }
+
+
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+            this.listBox1.Items.Clear();
+
+            //METO EL STRING QUE DEVUELVE EL COMBO EN UN CHAR, POR ESO ELIJO EL ELEMENTO 0.
+            String turno = this.comboBox1.SelectedItem.ToString();
+
+            //Debemos declarar los parámetros de REFERENCIA(que le pasaremos al proc. almacenado) como 
+            //el tipo de dato System.Nullable debido a que un valor
+            //por referencia podría admitir NULOS también además de //números.
+            System.Nullable<int> media, suma;
+            media = 0;
+            suma = 0;
+
+            var consulta = this.contexto.DATOSPLANTILLA(turno, ref media, ref suma);
+
+            foreach (var ape in consulta)
+            {
+                this.listBox1.Items.Add(ape.APELLIDO);
+            }
+
+            this.textBox1.Text = media.ToString();
+            this.textBox2.Text = suma.ToString();
+
+        }
+    }

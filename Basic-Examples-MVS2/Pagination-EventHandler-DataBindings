@@ -1,0 +1,71 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+using System.Data.SqlClient;
+
+namespace MVS19_Paginacion
+{
+    public partial class Form1 : Form
+    {
+
+        static string cadena = "Data Source=.;Initial Catalog=Hospital;Integrated Security=True";
+        SqlDataAdapter Ad = new SqlDataAdapter("Select * from dept", cadena);
+        DataSet Ds = new DataSet();
+        Button[] Botones;
+        short i;
+        TextBox[] Txt;
+
+
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            Ad.Fill(Ds, "Dept");
+            Botones = new Button[] { this.button1, this.button2, this.button3, this.button4 };
+            Txt = new TextBox[] { this.textBox1, this.textBox2, this.textBox3 };
+
+            for (i = 0; i <= Botones.GetUpperBound(0); i++)
+            {
+                Botones[i].Click += new EventHandler(this.Movimiento_Click);
+            }
+            for (i = 0; i <= Ds.Tables["Dept"].Columns.Count - 1; i++)
+            {
+                Txt[i].DataBindings.Add(new Binding("Text", Ds, Ds.Tables[0].TableName + "." + Ds.Tables["Dept"].Columns[i].ColumnName));
+            }
+            this.dataGridView1.ReadOnly = true;
+            this.dataGridView1.DataSource = Ds;
+            this.dataGridView1.DataMember = "Dept";
+        }
+
+        private void Movimiento_Click(object sender, EventArgs e)
+        {
+            int n;
+            n = Array.IndexOf(Botones, (Button)sender);
+            switch (n)
+            {
+                case 0: //Primero
+                    this.BindingContext[Ds, "Dept"].Position = 0;
+                    break;
+                case 1: //Anterior
+                    this.BindingContext[Ds, "Dept"].Position = this.BindingContext[Ds, "Dept"].Position - 1;
+                    break;
+                case 2: //Siguiente
+                    this.BindingContext[Ds, "Dept"].Position = this.BindingContext[Ds, "Dept"].Position + 1;
+                    break;
+                case 3: //Final
+                    this.BindingContext[Ds, "Dept"].Position = this.BindingContext[Ds, "Dept"].Count - 1;
+                    break;
+            }
+
+        }
+
+    }
+}

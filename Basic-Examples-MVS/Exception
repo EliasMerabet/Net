@@ -1,0 +1,51 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+
+namespace MVS3_Excepciones
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            short Num;
+            String Cadena;
+            try
+            {
+                Num = short.Parse(this.TxtNumero.Text);
+                if (Math.Sign(Num) == -1)
+                {
+                    throw new Exception();
+                }
+            }
+            catch (FormatException Ex)
+            {
+                MessageBox.Show("SOLO NUMEROS" + "\n" + Ex.Message);
+            }
+            catch (OverflowException Ex)
+            {
+                MessageBox.Show("DESBORDAMIENTO" + "\n" + Ex.Message);
+            }
+            catch (Exception Ex)
+            {
+                Cadena = "Mensaje: " + Ex.Message + "\n" +
+               "Objeto que causó el error: " + Ex.Source + "\n" +
+               "Método que generó el error: " + Ex.TargetSite.Name +
+              "\n" + Ex.ToString();
+                MessageBox.Show(Cadena, "Errores");
+
+            }
+
+        }
+    }
+}

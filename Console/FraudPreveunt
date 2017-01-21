@@ -1,0 +1,126 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FraudPrevention1
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            string path = @"E:\WorkSpaces\MVS\path\path\";
+            Console.WriteLine("Introduce the file´s name to check:");
+            string nameFile = Console.ReadLine();
+
+            if (nameFile != null)
+            {
+                try
+                {
+
+                    using (StreamReader file = new StreamReader(path + "SampleInput" + ".txt"))
+                    {
+
+
+                        String line;
+                        String first_line = file.ReadLine();
+                        int counter = 0;
+                        List<int> output = new List<int>();
+
+                        try
+                        {
+                            counter = Int32.Parse(first_line);
+                        }
+                        catch (FormatException)
+                        {
+                            Console.WriteLine("File format incorrect");
+                            return;
+                        }
+
+                        List<int> order_ids = new List<int>();
+                        List<int> deal_ids = new List<int>();
+                        List<String> emails = new List<String>();
+                        List<String> streets = new List<String>();
+                        List<String> citys = new List<String>();
+                        List<String> states = new List<String>();
+                        List<String> zip_codes = new List<String>();
+                        List<String> credits_cards = new List<String>();
+
+
+                        while ((line = file.ReadLine()) != null)
+                        {
+                            int i = 0;
+                            String[] fields = line.Split(',');
+
+                            try
+                            {
+                                order_ids.Add(Int32.Parse(fields[i]));
+                                i++;
+                                deal_ids.Add(Int32.Parse(fields[i]));
+                                i++;
+                            }
+                            catch (FormatException)
+                            {
+                                Console.WriteLine("File format incorrect");
+                                return;
+                            }
+
+                            emails.Add(fields[i].ToLower().Replace("St.", "Street").Replace("Illinois", "IL").Replace("Rd.","Road"));
+                            i++;
+                            streets.Add(fields[i]);
+                            i++;
+                            citys.Add(fields[i]);
+                            i++;
+                            states.Add(fields[i]);
+                            i++;
+                            zip_codes.Add(fields[i]);
+                            i++;
+                            credits_cards.Add(fields[i]);
+                        }
+
+                       for (int j = 0; j < counter; j++)
+                        {
+                            for (int i = j; i < counter; i++)
+                            {
+                                if (credits_cards[i] != credits_cards[j]) { 
+                                   if ((emails[j] == emails[i]) && (deal_ids[i] == deal_ids[j]))
+                                    {
+                                        if (!output.Contains(j + 1))
+                                        {
+                                            output.Add(j + 1);
+                                        }
+                                    }
+
+                                   if ((streets[i] == streets[j]) && (citys[i] == citys[j]) && (states[i] == states[j]) && (zip_codes[i] == zip_codes[j]) && (deal_ids[i] == deal_ids[j]))
+                                    {
+                                        if (!output.Contains(j + 1))
+                                        { 
+                                            output.Add(j + 1);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        output.RemoveAt(output.Count - 1);
+                        var outFile = string.Join(",", output);
+
+                        System.IO.StreamWriter fileOut = new System.IO.StreamWriter(path + "output.txt");
+                        fileOut.WriteLine(outFile);
+                        fileOut.Close();
+                    }
+                }
+
+                catch (Exception e)
+                {
+                    Console.WriteLine("The file could not be read:");
+                    Console.WriteLine(e.Message);
+                }
+
+            }
+        }
+
+    }
+}

@@ -1,0 +1,80 @@
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            cardardatos();
+        }
+
+        private void cardardatos()
+        {
+            var datos = from p in db.DOCTOR
+                        select p;
+            this.dataGridView1.DataSource = datos;
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            objDoctor.HOSPITAL_COD = this.textBox1.Text;
+            objDoctor.DOCTOR_NO = this.textBox2.Text;
+            objDoctor.APELLIDO = this.textBox3.Text;
+            objDoctor.ESPECIALIDAD = this.textBox4.Text;
+            db.DOCTOR.InsertOnSubmit(objDoctor);
+            try
+            {
+
+                db.SubmitChanges();
+                cardardatos();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al insertar: " + ex.ToString());
+            }
+
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            //LINQ to SQL no admite ni reconoce las operaciones de eliminación en cascada. 
+            //Si desea eliminar una fila de una tabla que tiene restricciones, deberá realizar una de las siguientes tareas:
+            //Establezca la regla ON DELETE CASCADE en la restricción FOREIGN KEY de la base de datos.
+            //Utilice su propio código para eliminar primero los objetos secundarios que impiden que se elimine el objeto primario
+
+            var consulta =
+           (from d in db.DOCTOR
+            where d.DOCTOR_NO == this.textBox2.Text
+            select d).First();
+
+            db.DOCTOR.DeleteOnSubmit(consulta);
+
+            try
+            {
+                db.SubmitChanges();
+                cardardatos();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al borrar: " + ex.ToString());
+            }
+
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            var consulta2 =
+                from d in db.DOCTOR
+                where d.DOCTOR_NO == this.textBox2.Text
+                select d;
+
+            consulta2.First().APELLIDO = this.textBox3.Text;
+            consulta2.First().ESPECIALIDAD = this.textBox4.Text;
+
+            try
+            {
+
+                db.SubmitChanges();
+                cardardatos();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al modificar: " + ex.ToString());
+            }
+
+        }

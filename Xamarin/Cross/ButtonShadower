@@ -1,0 +1,26 @@
+        private AbsoluteLayout addShadow(Button bt)
+        {
+            AbsoluteLayout al1 = new AbsoluteLayout();
+            al1.HeightRequest = 70;
+            al1.BackgroundColor = Color.Transparent;
+
+            AbsoluteLayout al = new AbsoluteLayout();
+            al.HeightRequest = 50;
+            al.BackgroundColor = Color.White;
+            al.Opacity = 0.4;
+
+            bt.HorizontalOptions = LayoutOptions.Start;
+            bt.VerticalOptions = LayoutOptions.Start;
+            bt.BorderRadius = 0;
+
+            AbsoluteLayout.SetLayoutBounds(bt, new Rectangle(0, 0, 0.7, 0.7));
+            AbsoluteLayout.SetLayoutFlags(bt, AbsoluteLayoutFlags.All);
+
+            AbsoluteLayout.SetLayoutBounds(al, new Rectangle(0.15, 0.2, 0.68, 0.7));
+            AbsoluteLayout.SetLayoutFlags(al, AbsoluteLayoutFlags.All);
+
+            al1.Children.Add(al);
+            al1.Children.Add(bt);
+
+            return al1;
+        }

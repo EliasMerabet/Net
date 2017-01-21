@@ -1,0 +1,30 @@
+if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                if ((openFileDialog1.OpenFile()) != null)
+                {
+                    string pathE = openFileDialog1.FileName;
+                    string pathS = pathE.Substring(0, pathE.Length - 4) + "copia.txt";
+                    string line;
+                    List<string> tablaComprobar = new List<string>();
+                    int count = 0;
+
+
+                    StreamReader file = new StreamReader(pathE);
+                    using (var FileSalida = new StreamWriter(pathS))
+                    {
+                        while ((line = file.ReadLine()) != null)
+                        {
+                            if (!tablaComprobar.Contains(line))
+                            {
+                                tablaComprobar.Add(line);
+                                FileSalida.WriteLine(line);
+                            }
+                            else
+                            {
+                                count++;
+                            }
+                        }
+                        FileSalida.WriteLine("\r\n" + count);
+                        FileSalida.Close();
+                    }
+                }

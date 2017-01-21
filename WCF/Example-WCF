@@ -1,0 +1,50 @@
+INTERFACE.
+[ServiceContract]
+    public interface IService1
+    {
+        [OperationContract]
+        String devolverPisosA();
+
+        [OperationContract]
+        String devolverPisosV();
+
+        [OperationContract]
+        String devolverNoticias();
+    }
+
+CLASS.
+
+public class Service1 : IService1
+    {
+        InmobiliariaDataContext contexto = new InmobiliariaDataContext();
+        public String devolverPisosA()
+        {
+            List<pisosAlquiler> consultaPA = (from piso in contexto.pisosAlquiler
+                              select piso).ToList();
+
+            string json = JsonConvert.SerializeObject(consultaPA);
+
+            return json;
+
+        }
+
+        public String devolverPisosV()
+        {
+            List<pisosVenta> consultaPV = (from piso in contexto.pisosVenta
+                              select piso).ToList();
+
+            string json = JsonConvert.SerializeObject(consultaPV);
+
+            return json;
+        }
+
+        public String devolverNoticias()
+        {
+            List<noticias> consultaN = (from piso in contexto.noticias
+                             select piso).ToList();
+
+            string json = JsonConvert.SerializeObject(consultaN);
+
+            return json;
+        }
+    }

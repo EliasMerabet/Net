@@ -1,0 +1,32 @@
+        //EN ESTE EJEMPLO ACCEDEMOS A LA BBDD MEDIANTE UNA CLASE LINQ DESDE EL CONTROLADOR.
+        //NO ES LO CORRECTO. DEBE HACERSE DESDE EL MODELO.
+
+        EMPDataContext contexto = new EMPDataContext();
+        public ActionResult Index()
+        {
+            var consulta = from emp in contexto.EMP
+                           where emp.APELLIDO == "REY"
+                           select emp;
+
+            Empleado emp1 = new Empleado();
+            emp1.apellido = consulta.First().APELLIDO;
+            emp1.oficio = consulta.First().OFICIO;
+            emp1.Salario = (int) consulta.First().SALARIO;
+            emp1.comision = (int) consulta.First().COMISION;
+
+            return View(emp1);
+        }
+
+        public ActionResult About()
+        {
+            ViewBag.Message = "Your application description page.";
+
+            return View();
+        }
+
+        public ActionResult Contact()
+        {
+            ViewBag.Message = "Your contact page.";
+
+            return View();
+        }

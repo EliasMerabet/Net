@@ -1,0 +1,146 @@
+ASP.
+<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="_Default" %>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+    <style type="text/css">
+        .auto-style1 {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <form id="form1" runat="server">
+    <div>
+    
+        <asp:DataList ID="DataList1" runat="server" BackColor="#DEBA84" BorderColor="#DEBA84" BorderStyle="None" BorderWidth="1px" CellPadding="3" CellSpacing="2" GridLines="Both" OnItemCommand="DataList1_ItemCommand" RepeatColumns="3">
+            <FooterStyle BackColor="#F7DFB5" ForeColor="#8C4510" />
+            <HeaderStyle BackColor="#A55129" Font-Bold="True" ForeColor="White" />
+            <ItemStyle BackColor="#FFF7E7" ForeColor="#8C4510" />
+            <ItemTemplate>
+                <asp:LinkButton ID="LinkButton1" runat="server"><%#Eval("Club") %></asp:LinkButton>
+            </ItemTemplate>
+            <SelectedItemStyle BackColor="#738A9C" Font-Bold="True" ForeColor="White" />
+            <SelectedItemTemplate>
+                <asp:Label ID="Label1" runat="server" Text='<%#Eval("") %>'></asp:Label>
+            </SelectedItemTemplate>
+        </asp:DataList>
+        <table class="auto-style1">
+            <tr>
+                <td>
+                    <asp:DataList ID="DataList2" runat="server" BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" OnItemCommand="DataList2_ItemCommand" RepeatColumns="3">
+                        <AlternatingItemStyle BackColor="Gainsboro" />
+                        <FooterStyle BackColor="#CCCCCC" ForeColor="Black" />
+                        <HeaderStyle BackColor="#000084" Font-Bold="True" ForeColor="White" />
+                        <HeaderTemplate>
+                            <table class="auto-style1">
+                                <tr>
+                                    <td>ESTATURA</td>
+                                    <td>PESO</td>
+                                    <td>POSICION</td>
+                                </tr>
+                            </table>
+                        </HeaderTemplate>
+                        <ItemStyle BackColor="#EEEEEE" ForeColor="Black" />
+                        <ItemTemplate>
+                            <asp:LinkButton ID="LinkButton2" runat="server"><%#Eval("Jugador")%></asp:LinkButton>
+                        </ItemTemplate>
+                        <SelectedItemStyle BackColor="#008A8C" Font-Bold="True" ForeColor="White" />
+                        <SelectedItemTemplate>
+                            <table class="auto-style1">
+                                <tr>
+                                    <td>
+                                        <asp:Label ID="Label2" runat="server" Text='<%#Eval("Estatura")%>'></asp:Label>
+                                    </td>
+                                    <td>
+                                        <asp:Label ID="Label3" runat="server" Text='<%#Eval("Peso")%>'></asp:Label>
+                                    </td>
+                                    <td>
+                                        <asp:Label ID="Label4" runat="server" Text='<%#Eval("Posicion_Cod")%>'></asp:Label>
+                                    </td>
+                                </tr>
+                            </table>
+                        </SelectedItemTemplate>
+                    </asp:DataList>
+                </td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td>
+            </tr>
+        </table>
+    
+    </div>
+    </form>
+</body>
+</html>
+
+CLASS.
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Data.SqlClient;
+using System.Data;
+
+public partial class _Default : System.Web.UI.Page
+{
+
+    static string Cadena = "Data Source=.;Initial Catalog=Futbol;Integrated Security=True";
+    DataSet Ds = new DataSet();
+    SqlDataAdapter AdEquipos = new SqlDataAdapter("Select * from Equipos", Cadena);
+    SqlDataAdapter AdJug = new SqlDataAdapter("Select * from Jugadores", Cadena);
+    //el dataview SOLO vale para hacer RowFilter
+    DataView Dv;
+    int indexDL1;
+
+
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        //lleno el dataset con las 2 tablas
+        AdEquipos.Fill(Ds, "Equipos");
+        AdJug.Fill(Ds, "Jugadores");
+        //meto en el dataView el dataset
+        Dv = Ds.Tables["Jugadores"].DefaultView;
+
+        if (this.IsPostBack == false)
+        {
+            this.DataList1.DataSource = Ds;
+            this.DataList1.DataMember = "Equipos";
+            this.DataList1.DataKeyField = "Equipo_Cod";
+            this.DataList1.DataBind();
+        }
+    }
+
+    private void CargarJugadores()
+    {
+        Dv.RowFilter = "Equipo_Cod=" + this.DataList1.DataKeys[this.DataList1.SelectedIndex];
+
+        this.DataList2.DataSource = Dv;
+        this.DataList2.DataBind();
+    }
+
+
+
+    protected void DataList1_ItemCommand(object source, DataListCommandEventArgs e)
+    {
+        //esto se lanza al pinchar sobre un equipo, y cambia entre lectura/edicion
+        this.DataList1.SelectedIndex = e.Item.ItemIndex;
+        indexDL1 = e.Item.ItemIndex;
+        CargarJugadores();
+
+    }
+
+    protected void DataList2_ItemCommand(object source, DataListCommandEventArgs e)
+    {
+        //esto se lanza al pinchar sobre un jugador, y cambia entre lectura/edicion
+        this.DataList1.SelectedIndex = this.indexDL1;
+        this.DataList2.SelectedIndex = e.Item.ItemIndex;
+        CargarJugadores();
+    }
+}

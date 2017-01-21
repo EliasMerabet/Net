@@ -1,0 +1,52 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+using System.Data.SqlClient;
+
+namespace MVS18DESCONECTADO_BusquedaInformacion
+{
+    public partial class Form1 : Form
+    {
+
+        static string cadena = "Data Source=.;Initial Catalog=HOSPITAL;Integrated Security=True";
+        SqlDataAdapter AdDoctor = new SqlDataAdapter("Select * from doctor", cadena);
+        DataSet Ds = new DataSet();
+
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            AdDoctor.Fill(Ds, "Doctor");
+
+            Ds.Tables["Doctor"].PrimaryKey = new DataColumn[] { Ds.Tables["Doctor"].Columns["Doctor_no"] };
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            DataRow Fila;
+            int codigo = int.Parse(this.textBox1.Text);
+            Fila = Ds.Tables["Doctor"].Rows.Find(codigo);
+            if (Fila != null)
+            {
+                label4.Text = Fila["Apellido"].ToString();
+                label5.Text = Fila["Especialidad"].ToString();
+            }
+            else
+            {
+
+                MessageBox.Show("Doctor no encontrado");
+
+            }
+
+        }
+    }
+}

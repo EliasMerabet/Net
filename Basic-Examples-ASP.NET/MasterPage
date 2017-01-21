@@ -1,0 +1,97 @@
+MASTERPAGE.
+<%@ Master Language="C#" AutoEventWireup="true" CodeFile="MasterPage.master.cs" Inherits="MasterPage" %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head runat="server">
+    <title>Página sin título</title>
+</head>
+<body style="background-color:#E7DAD3">
+    <div>
+        <table cellspacing="0" cellpadding="2">
+              <tr>
+                  <td colspan="2"/>
+              </tr>
+               <tr valign="top">
+                <td rowspan="2" style="width: 130px">
+                    <a href="Protos.aspx">Protos</a><br/>
+                    <a href="VSicilia.aspx">Vega Sicilia</a><br/>
+                    <a href="Arzuaga.aspx">Arzuaga</a><br/>
+                    <a href="PradoRey.aspx">PradoRey</a><br/>
+                    <a href="PGrajal.aspx">Palacio de Grajal</a><br />
+                     <a href="SNava.aspx">Señorio de Nava</a><br />
+                </td>
+                <td>
+        <asp:contentplaceholder id="ContentPlaceHolder1" runat="server">
+                     <h3>
+                            Bienvenido a la Vinoteca de la Ribera del Duero</h3>
+                    Como Consejo Regulador de la D.O. Ribera del Duero, nuestra función principal es
+                    avalar con nuestro sello la autenticidad de los vinos de esta Denominación de Origen,
+                    asegurando al consumidor que cada botella que lleva una contraetiqueta numerada
+                    ha superado rigurosos controles antes de llegar a sus copas.
+        </asp:contentplaceholder>
+  <br/><br/>
+    <asp:ContentPlaceHolder ID="ContentPlaceHolder2" runat="server">
+    <img src="Imagenes/Vino.jpg" alt=""/>
+    </asp:ContentPlaceHolder>
+   <br /><br />
+                    
+                        <img src="Imagenes/LogoRibera.jpg" alt=""/>
+                    
+                    <br /><br />
+                     
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <center><span style="font-style:italic;">Nuestros Vinos. Conoce sus característias.</span></center></td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html> 
+
+CHILDREN.
+<%@ Page Title="" Language="C#" MasterPageFile="~/MasterPage.master" AutoEventWireup="true" CodeFile="Protos.aspx.cs" Inherits="Protos" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
+    <strong>PROTOS
+    CRIANZA</strong>
+       <br />
+       <strong>
+
+Cepas</strong>
+100% Tinta del País.
+       <br />
+       <strong>
+
+Elaboración</strong>
+Fermentación de la uva seleccionada en depósitos de acero inoxidable con temperatura controlada.
+       <br />
+       <strong>
+
+Crianza</strong>
+Un mínimo de 12 meses en barrica de roble americano y su correspondiente envejecimiento en botella.
+       <br />
+       <strong>
+
+Fase Visual</strong>
+Color picota con tonalidades púrpuras.
+       <br />
+       <strong>
+
+Fase olfativa </strong>
+Aroma a fruta madura (ciruela, moras) y tostados de roble limpio y franco.
+       <br />
+       <strong>
+
+Fase gustativa</strong>
+En boca, es amplio con taninos uniformes y muy finos.
+Su postgusto largo y agradable nos deja un ligero matiz tostado muy sutil y característico de todo un Protos.
+
+</asp:Content>
+
+<asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder2" Runat="Server">
+        <img alt="" src="Imagenes/Protos.jpg" /></p>
+</asp:Content>

@@ -1,0 +1,44 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+
+namespace MVS2_MatricesControl
+{
+    public partial class Form1 : Form
+    {
+        int SumaTotal = 0;
+        Button[] Botones;
+
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            int i;
+            Botones = new Button[] { button1, button2, button3, button4, button5, button6, button7, button8, button9 };
+
+            for (i = 0; i < Botones.Length; i++)
+            {
+
+                Botones[i].Click += new EventHandler(this.Sumar);
+                Botones[i].Text = (i + 1).ToString();
+            }
+
+        }
+
+        private void Sumar(object sender, EventArgs e)
+        {
+            Button b;
+            b = (Button)(sender);
+            SumaTotal += int.Parse(b.Text);
+            TxtSuma.Text = SumaTotal.ToString();
+        }
+    }
+}

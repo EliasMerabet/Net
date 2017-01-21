@@ -1,0 +1,164 @@
+INDEX
+
+
+@{
+    ViewBag.Title = "Index";
+}
+
+@model List<Test_DevExpress_DDD_CrystalReport.Models.Socios>
+
+<h2>Index</h2>
+
+</br></br></br>
+
+<a href="@Url.Action("VerReporte")"> Ver Socios</a>
+</br>
+<a href="@Url.Action("GetReporte")"> Get Socios en PDF</a>
+
+VER REPORTE.
+
+@model IEnumerable<Test_DevExpress_DDD_CrystalReport.Models.Socios>
+
+@{ViewBag.Title = "Reporte Socios";}
+
+<h2>ReportsEverest</h2><p>@Html.ActionLink("Create New", "Create")</p>
+
+<div><a href="@Url.Action("GetReporte")"> Get Report in PDF</a></div> 
+
+<table border="1" cellpadding="10" cellspacing="10">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Nombre)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Apellidos)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Direccion)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Dni)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FechaCreacion)
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Nombre)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Apellidos)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Direccion)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Dni)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FechaCreacion)
+            </td>
+        </tr>
+    }
+</table>
+
+CONTROLLER.
+
+using CrystalDecisions.CrystalReports.Engine;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using Test_DevExpress_DDD_CrystalReport.Models;
+using System.Data;
+using FastMember;
+
+namespace Test_DevExpress_DDD_CrystalReport.Controllers
+{
+    public class HomeController : Controller
+    {
+        //
+        // GET: /Home/
+        public ActionResult Index()
+        {
+            return View(CreateSocios());
+        }
+
+        public ActionResult VerReporte()
+        {
+            return View(CreateSocios());
+        }
+
+        private IEnumerable<Socios> CreateSocios()
+        {
+            List<Socios> list_socios = new List<Socios>();
+
+            for (int i = 0; i < 5; i++)
+            {
+                Socios s = new Socios();
+                s.Nombre = "SocioNombre" + i;
+                s.Apellidos = "SocioApellidos" + i;
+                s.Dni = "SocioDNI" + i;
+                s.Direccion = "SocioDireccion" + i;
+                s.FechaCreacion = DateTime.Now.AddHours(i);
+
+                list_socios.Add(s);
+            }
+
+            return list_socios;
+        }
+
+        public ActionResult GetReporte()
+        {
+            IEnumerable<Socios> data = CreateSocios();
+            DataTable table = new DataTable();
+            using(var reader = ObjectReader.Create(data)) 
+            {
+                table.Load(reader);
+            }
+
+            ReportDocument rd = new ReportDocument();
+            rd.Load(Path.Combine(Server.MapPath("~/Reports"), "Reporte.rpt"));
+            rd.SetDataSource(table);
+
+            Response.Buffer = false;
+            Response.ClearContent();
+            Response.ClearHeaders();
+            try
+            {
+                Stream stream = rd.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat);
+                stream.Seek(0, SeekOrigin.Begin);
+                return File(stream, "application/pdf", "Socios.pdf");
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+	}
+}
+
+SOCIOS.
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+namespace Test_DevExpress_DDD_CrystalReport.Models
+{
+    public class Socios
+    {
+        public string Nombre { get; set; }
+        public string Apellidos { get; set; }
+        public string Dni { get; set; }
+        public string Direccion { get; set; }
+        public DateTime FechaCreacion { get; set; }
+    }
+}

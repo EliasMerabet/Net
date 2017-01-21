@@ -1,0 +1,64 @@
+CONTROLLER.
+
+        public ActionResult PlantillaHospital()
+        {
+            Models.ModeloHospital modelo = new Models.ModeloHospital();
+            List<Models.PLANTILLA> lista = modelo.GetPlantilla();
+            return View(lista);
+        }
+
+        //POST
+        [HttpPost]
+        public ActionResult PlantillaHospital(int? txthospital)
+        {
+            Models.ModeloHospital modelo = new Models.ModeloHospital();
+            List<Models.PLANTILLA> lista = modelo.GetPlantilla(txthospital.Value);
+            return View(lista);
+        }
+        
+VIEW.
+
+@{
+    ViewBag.Title = "PlantillaHospital";
+}
+
+@model List<PlantillaZonas.Models.PLANTILLA>
+
+<h2>Plantilla Hospital</h2>
+
+<form name="form1" method="post">
+    Introduzca un hospital
+    <input type="text" name="txthospital" />
+    <input type="submit" value="Buscar empleados" />
+</form>
+
+<br />
+@if (Model != null)// Preguntamos si vienen datos para que no de error al recorrer el modelo
+{
+
+    <table border="1">
+
+        <tr>
+            <th>APELLIDO</th>
+            <th>FUNCION</th>
+            <th>HOSPITAL</th>
+        </tr>
+
+@foreach (PlantillaZonas.Models.PLANTILLA p in Model)
+        {
+            <tr>
+                <td>@p.APELLIDO</td>
+                <td>@p.FUNCION</td>
+                <td>@p.HOSPITAL_COD</td>
+            </tr>
+        }
+
+
+    </table>
+}
+else
+{
+
+    <p style="color:Red">SIN RESULTADOS</p>
+
+}

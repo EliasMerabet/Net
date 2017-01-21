@@ -1,0 +1,115 @@
+ACTIVITY
+
+using System;
+using Android.App;
+using Android.Content;
+using Android.Runtime;
+using Android.Views;
+using Android.Widget;
+using Android.OS;
+
+namespace Prueba
+{
+    [Activity(Label = "POC_Login", MainLauncher = true, Icon = "@drawable/icon")]
+    public class MainActivity : Activity
+    {
+        EditText usuario;
+        EditText password;
+
+        protected override void OnCreate(Bundle bundle)
+        {
+            base.OnCreate(bundle);
+
+            // Set our view from the "main" layout resource
+            SetContentView(Resource.Layout.Main);
+
+            this.usuario = FindViewById<EditText>(Resource.Id.editText1);
+            this.password = FindViewById<EditText>(Resource.Id.editText2);
+
+            // Get our button from the layout resource,
+            // and attach an event to it
+            Button button = FindViewById<Button>(Resource.Id.button1);
+
+            button.Click += (object sender, EventArgs e) =>
+            {
+                if ((this.usuario.Text == "Elias") && (this.password.Text == "Elias"))
+                {
+                    Toast.MakeText(this, "Login Correcto", ToastLength.Long).Show();
+                }
+                else
+                {
+                    Toast.MakeText(this, "Vos Sos Un Pelotudo!!!", ToastLength.Long).Show();
+                }
+            };
+        }
+
+    }
+}
+
+LAYOUT.
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_height="wrap_content"
+    android:layout_width="wrap_content">
+    <ImageView
+        android:src="@drawable/optimissa_header"
+        android:layout_width="382.0dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView1"
+        android:layout_marginRight="27.5dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginTop="30dp" />
+    <TextView
+        android:text="@string/Usuario"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_width="117.5dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView1"
+        android:layout_marginTop="20dp"
+        android:padding="5dp"
+        android:layout_marginLeft="20dp" />
+    <EditText
+        android:layout_width="194.0dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/editText1"
+        android:padding="5dp"
+        android:layout_marginLeft="20dp" />
+    <TextView
+        android:text="@string/Pass"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_width="118.5dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView2"
+        android:layout_marginTop="50dp"
+        android:padding="5dp"
+        android:layout_marginLeft="20dp" />
+    <EditText
+        android:inputType="textPassword"
+        android:layout_width="198.0dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/editText2"
+        android:padding="5dp"
+        android:layout_marginLeft="20dp" />
+    <Button
+        android:text="@string/Login"
+        android:layout_height="40dp"
+        android:id="@+id/button1"
+        android:layout_marginTop="20dp"
+        android:layout_width="100dp"
+        android:layout_marginLeft="250dp"
+        android:background="@drawable/button_bg" />
+</LinearLayout>
+
+BUTTON_BG.
+
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+  android:shape="rectangle">
+  <gradient android:startColor="#4682B4"
+    android:endColor="#AFEEEE"
+    android:angle="270" />
+  <corners android:radius="20dp" />
+  <stroke android:width="8px" android:color="#000000" />
+</shape>

@@ -1,0 +1,22 @@
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            var datosturno = (from p in contexto.PLANTILLA select p.T).Distinct();
+
+            foreach (var t in datosturno)
+            {
+                this.cmbturno.Items.Add(t);
+            }
+
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            String turno = this.comboBox1.SelectedItem.ToString();
+
+            System.Data.Entity.Core.Objects.ObjectParameter media = new System.Data.Entity.Core.Objects.ObjectParameter("media", typeof(int));
+            System.Data.Entity.Core.Objects.ObjectParameter suma = new System.Data.Entity.Core.Objects.ObjectParameter("suma", typeof(int));
+            var consulta = this.contexto.DATOSPLANTILLA1(turno, media, suma);
+            this.textBox1.Text = media.Value.ToString();
+            this.textBox2.Text = suma.Value.ToString();
+
+        }

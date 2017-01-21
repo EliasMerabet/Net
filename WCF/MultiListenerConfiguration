@@ -1,0 +1,15 @@
+WEB.CONFIG
+
+    <serviceHostingEnvironment multipleSiteBindingsEnabled="true"/>
+
+applicationhost.config.
+
+	<site name="ProyectoJosephWCF" id="2">
+                <application path="/" applicationPool="Clr4IntegratedAppPool">
+                    <virtualDirectory path="/" physicalPath="E:\WorkSpaces\MVS\ProyectoJosephWCF\ProyectoJosephWCF" />
+                </application>
+                <bindings>
+                    <binding protocol="http" bindingInformation="*:52896:localhost" />
+                  <binding protocol="http" bindingInformation="*:52896:*" />
+                </bindings>
+            </site>

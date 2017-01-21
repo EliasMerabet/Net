@@ -1,0 +1,93 @@
+ASP.
+<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="_Default" %>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+</head>
+<body>
+    <form id="form1" runat="server">
+    <div>
+    
+        <asp:Button ID="Button1" runat="server" OnClick="Button1_Click" Text="Horas y Minutos" />
+        <asp:Button ID="Button2" runat="server" OnClick="Button2_Click" Text="Horas, Minutos y Segundos" />
+        <asp:Button ID="Button3" runat="server" OnClick="Button3_Click" Text="Fecha y Hora" />
+    
+    </div>
+
+        <asp:ScriptManager ID="ScriptManager1" runat="server">
+        </asp:ScriptManager>
+
+        <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
+
+            <ContentTemplate>
+                <asp:Label ID="Label1" runat="server" Text="Label"></asp:Label>
+            </ContentTemplate>
+
+            <Triggers>
+                <asp:AsyncPostBackTrigger ControlID="Button1" EventName="Click" />
+            </Triggers>
+
+        </asp:UpdatePanel>
+
+        <asp:UpdatePanel ID="UpdatePanel2" runat="server" UpdateMode="Conditional">
+            <ContentTemplate>
+                <asp:Label ID="Label3" runat="server" Text="Label"></asp:Label>
+            </ContentTemplate>
+            <Triggers>
+                <asp:AsyncPostBackTrigger ControlID="Button2" EventName="Click" />
+            </Triggers>
+        </asp:UpdatePanel>
+
+        <asp:UpdatePanel ID="UpdatePanel3" runat="server" UpdateMode="Conditional">
+            <ContentTemplate>
+                <asp:Label ID="Label2" runat="server" Text="Label"></asp:Label>
+            </ContentTemplate>
+            <Triggers>
+                <asp:AsyncPostBackTrigger ControlID="Button3" EventName="Click" />
+            </Triggers>
+        </asp:UpdatePanel>
+
+    </form>
+</body>
+</html>
+
+CLASS.
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+public partial class _Default : System.Web.UI.Page
+{
+    protected void Page_Load(object sender, EventArgs e)
+    {
+
+    }
+
+    protected void Button1_Click(object sender, EventArgs e)
+    {
+        this.Label1.Text = DateTime.Now.ToShortTimeString();
+        this.Label2.Text = DateTime.Now.ToLongTimeString();
+        this.Label3.Text = DateTime.Now.ToString();
+    }
+
+    protected void Button2_Click(object sender, EventArgs e)
+    {
+        this.Label1.Text = DateTime.Now.ToShortTimeString();
+        this.Label2.Text = DateTime.Now.ToLongTimeString();
+        this.Label3.Text = DateTime.Now.ToString();
+    }
+
+    protected void Button3_Click(object sender, EventArgs e)
+    {
+        this.Label1.Text = DateTime.Now.ToShortTimeString();
+        this.Label2.Text = DateTime.Now.ToLongTimeString();
+        this.Label3.Text = DateTime.Now.ToString();
+    }
+}

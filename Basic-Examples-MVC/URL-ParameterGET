@@ -1,0 +1,68 @@
+VIEW (Index).
+@{
+    ViewBag.Title = "Index de empleados";
+}
+
+@model List<DetallesEMPs.Models.EMP>
+
+<h2>Lista de empleados</h2>
+
+<ul>
+    @foreach (DetallesEMPs.Models.EMP emp in Model)
+    {
+        <li>
+            @emp.APELLIDO
+            @Html.ActionLink("Detalles", "DetallesEmpleado", "Empleado",
+            new { empno = @emp.EMP_NO }, new { @htmlattr = "value" })
+        </li>
+    }
+</ul>
+
+VIEW (Details).
+@{
+    ViewBag.Title = "Detalles Empleado";
+}
+
+@model DetallesEMPs.Models.EMP
+
+<h2>Detalles de empleado</h2>
+
+<table border="1">
+    <tr>
+        <th>Apellido</th>
+        <td>@Model.APELLIDO</td>
+    </tr>
+    <tr>
+        <th>Oficio</th>
+        <td>@Model.OFICIO</td>
+    </tr>
+    <tr>
+        <th>Salario</th>
+        <td>@Model.SALARIO</td>
+    </tr>
+    <tr>
+        <th>Departamento</th>
+        <td>@Model.DEPT_NO</td>
+    </tr>
+</table>
+<br />
+@Html.ActionLink("Volver a empleados", "Index", "Empleado")
+
+CONTROLLER.
+public class EmpleadoController : Controller
+    {
+        // GET: Empleado
+        public ActionResult Index()
+        {
+            Models.ModeloHospital modelo = new Models.ModeloHospital();
+            List<Models.EMP> lista = modelo.GetEmpleados();
+            return View(lista);
+
+        }
+
+        public ActionResult DetallesEmpleado(int? empno)
+        {
+            Models.ModeloHospital modelo = new Models.ModeloHospital();
+            Models.EMP empleado = modelo.GetEmpleadoId(empno.Value);
+            return View(empleado);
+        }

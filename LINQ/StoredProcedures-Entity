@@ -1,0 +1,52 @@
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            this.cargarDatosPlantilla();
+        }
+
+        private void cargarDatosPlantilla()
+        {
+
+            var datosPlantilla = from plan in contexto.PLANTILLA
+                                 select new
+                                 {
+                                     codigo = plan.EMPLEADO_NO,
+                                     apellido = plan.APELLIDO,
+                                     funcion = plan.FUNCION
+                                 };
+
+            this.dataGridView1.DataSource = datosPlantilla;
+            this.dataGridView1.AllowUserToAddRows = false;
+            this.dataGridView1.ReadOnly = true;
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
+            String ape, fun, cod;
+            int indice;
+
+            ape = this.textBox1.Text;
+            fun = this.textBox1.Text;
+            indice = this.dataGridView1.CurrentCell.RowIndex;
+            cod = this.dataGridView1[0, indice].Value.ToString();
+
+            this.contexto.MODIFICARPLANTILLA(int.Parse(cod), ape, fun);
+
+            var resultado = (from plan in contexto.PLANTILLA
+                             where plan.EMPLEADO_NO == cod
+                             select new
+                             {
+                                 Apellido = plan.APELLIDO,
+                                 Funcion = plan.FUNCION
+                             }).First();
+
+            MessageBox.Show("Registro Modificado:\n" + resultado.Apellido + "\n" + resultado.Funcion);
+
+            this.cargarDatosPlantilla();
+        }

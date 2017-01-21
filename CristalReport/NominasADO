@@ -1,0 +1,83 @@
+using System.Data.SqlClient;
+using System.IO;
+
+static String cadena = "Data Source=.;Initial Catalog=HOSPITAL;User ID=sa";
+DataSet Ds = new DataSet();
+SqlDataAdapter AdSoc = new SqlDataAdapter("SELECT * FROM DEPT",cadena);
+SqlDataAdapter AdEmp = new SqlDataAdapter("SELECT * FROM EMP",cadena);
+DataView Dv;
+
+    protected void Page_Load(object sender, EventArgs e)
+    {
+if (Page.IsPostBack==false){
+            this.AdSoc.Fill(Ds, "SOCIOS");
+            this.AdEmp.Fill(Ds, "EMPLEADOS");
+            this.Dv = new DataView(Ds.Tables["EMPLEADOS"]);
+            int i;
+            TreeNode Raiz =new TreeNode();
+            Raiz.Text = "SOCIOS";
+            Raiz.ImageUrl = "Imagenes/socios.png";
+            this.TrvSoc.Nodes.Add(Raiz);
+
+            foreach( DataRow f in Ds.Tables["SOCIOS"].Rows){
+                TreeNode NodoSocio=new TreeNode();
+                NodoSoc.Text = f["DNOMBRE"].ToString();
+                NodoSoc.Value = f["Tienda_No"].ToString();
+                NodoDept.ImageUrl = "Imagenes/socios.jpg";
+                Raiz.ChildNodes.Add(NodoSoc);
+                Dv.RowFilter = "Tienda_No=" + f["Tienda_No"];
+                for( i = 0;i<Dv.Count;i++){
+                    TreeNode NodoEmp =new TreeNode();
+                    NodoEmp.Text = Dv[i].Row["APELLIDO"].ToString();
+                    NodoEmp.Value = Dv[i].Row["EMP_NO"].ToString();
+                    NodoEmp.ImageUrl = "Imagenes/empleado.png";
+                    NodoDept.ChildNodes.Add(NodoEmp);
+                }
+           }
+}
+}
+protected void TrvSoc_SelectedNodeChanged(object sender, EventArgs e)
+    {
+        int Nivel;
+        Nivel = TrvDept.SelectedNode.Socios;
+        if(Nivel == 2){ //EMPLEADOS
+         GenerarInforme(int.Parse(TrvSoc.SelectedNode.Value.ToString()), TrvSoc.SelectedNode.Parent.Text);
+        }
+    }
+    private void GenerarInforme(int Emp, String Socio){
+        
+        double Salario, Total, Iva;
+        DataSet1.EMPDataTable t = new DataSet1.EMPDataTable();
+        String Informe;
+AdEmp.SelectCommand.CommandText = "SELECT * FROM EMP WHERE EMP_NO="+ Emp;
+        AdEmp.Fill(t);
+        Informe = this.Server.MapPath("Nomina.rpt");
+        CrystalDecisions.CrystalReports.Engine.ReportDocument objReport = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
+        objReport.Load(Informe);
+        Ds.Tables.Add(t);
+        objReport.SetDataSource(Ds);
+        Salario = double.Parse(Ds.Tables["EMP"].Rows[0]["SALARIO"].ToString());
+        Salario += double.Parse(Ds.Tables["EMP"].Rows[0]["COMISION"].ToString());
+        Iva = Salario * 0.16;
+        Total = Salario - Iva;
+        //Pasamos los parámetros al informe
+        objReport.SetParameterValue("TITULOSOCIO", "SOCIO DE " + Socio);
+        objReport.SetParameterValue("SALARIO", Total);
+        objReport.SetParameterValue("IVA", Iva);
+        this.CrystalReportViewer1.ReportSource = objReport;
+        this.CrystalReportViewer1.Visible = true;
+        //Código para exportar el informe a formato pdf
+        MemoryStream OStream;
+        OStream = (MemoryStream)objReport.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat);
+        String Ruta;
+        Ruta = this.Server.MapPath("Nominas");
+        Ruta += "/Nomina_" + Emp + ".pdf";
+        FileStream Fichero =new FileStream(Ruta, FileMode.Create);
+        Byte[] DatosByte;
+        DatosByte = OStream.ToArray();
+        Fichero.Write(DatosByte, 0, DatosByte.Length);
+        Fichero.Flush();
+        Fichero.Close();
+    }
+
+

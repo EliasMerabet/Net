@@ -1,0 +1,98 @@
+INTERFACE.
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Serialization;
+using System.ServiceModel;
+using System.ServiceModel.Web;
+using System.Text;
+
+namespace Proveedor
+{
+    [ServiceContract]
+    public interface IService1
+    {
+        [OperationContract]
+        string devolverPeliculas(string actores);
+    }
+
+}
+
+CLASS.
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Serialization;
+using System.ServiceModel;
+using System.ServiceModel.Web;
+using System.Text;
+using System.Data.SqlClient;
+using System.Configuration;
+using System.Data;
+
+
+namespace Proveedor
+{
+    // NOTA: puede usar el comando "Rename" del menú "Refactorizar" para cambiar el nombre de clase "Service1" en el código, en svc y en el archivo de configuración.
+    // NOTE: para iniciar el Cliente de prueba WCF para probar este servicio, seleccione Service1.svc o Service1.svc.cs en el Explorador de soluciones e inicie la depuración.
+
+
+        public class Service1 : IService1
+        {
+        SqlDataAdapter ad;
+        static string cadena = ConfigurationManager.ConnectionStrings["CADENAPELICULAS"].ConnectionString;
+        DataSet ds = new DataSet();
+
+        public string devolverPeliculas(string observaciones)
+            {
+                ad = new SqlDataAdapter("Select TipoPeli,Observaciones,Fecha from peliculas where Observaciones like '%" + observaciones + "%'", cadena);
+                ad.Fill(ds, "Peliculas");
+                return ds.GetXml();
+            }
+        }
+
+
+    }
+    
+    CLIENT.
+    using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Xml;
+using System.Data;
+
+
+public partial class _Default : System.Web.UI.Page
+{
+
+    DataSet ds = new DataSet();
+    XmlDocument xmldoc;
+    ServiceReference1.Service1Client servicio = new ServiceReference1.Service1Client();
+
+    protected void Button1_Click(object sender, EventArgs e)
+    {
+        Label2.Text = String.Empty;
+        xmldoc = new System.Xml.XmlDocument();
+        string docxml;
+        string rutaxml;
+        docxml = servicio.devolverPeliculas(this.TextBox1.Text);
+        xmldoc.LoadXml(docxml);
+        rutaxml = Server.MapPath(".") + "\\" + "pelis.xml";
+        xmldoc.Save(rutaxml);
+        ds.ReadXml(rutaxml);
+        if (ds.Tables.Count == 0)
+        {
+            Label2.Text = "SIN RESULTADOS EN LA CONSULTA";
+        }
+        else
+        {
+            this.GridView1.DataSource = ds;
+            this.GridView1.DataMember = ds.Tables[0].TableName;
+            this.GridView1.DataBind();
+        }
+
+    }
+}

@@ -1,0 +1,181 @@
+PROVIDER.
+INTERFACE.
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Serialization;
+using System.ServiceModel;
+using System.ServiceModel.Web;
+using System.Text;
+
+namespace Optica
+{
+    // NOTA: puede usar el comando "Rename" del menú "Refactorizar" para cambiar el nombre de interfaz "IService1" en el código y en el archivo de configuración a la vez.
+    [ServiceContract]
+    public interface IService1
+    {
+
+        [OperationContract]
+        String descripcion(string producto);
+        [OperationContract]
+        String precio(string producto);
+
+        [OperationContract]
+        String stock();
+
+        [OperationContract]
+        String stockminimo();
+    }
+}
+
+CLASS.
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Serialization;
+using System.ServiceModel;
+using System.ServiceModel.Web;
+using System.Text;
+using System.Data.SqlClient;
+using System.Data;
+using System.Xml;
+using System.Configuration;
+
+namespace Optica
+{
+    // NOTA: puede usar el comando "Rename" del menú "Refactorizar" para cambiar el nombre de clase "Service1" en el código, en svc y en el archivo de configuración.
+    // NOTE: para iniciar el Cliente de prueba WCF para probar este servicio, seleccione Service1.svc o Service1.svc.cs en el Explorador de soluciones e inicie la depuración.
+    public class Service1 : IService1
+    {
+        SqlDataAdapter ad, ad1, ad2, ad3;
+        static string cadena = ConfigurationManager.ConnectionStrings["cadenaoptica"].ConnectionString;
+        DataSet ds = new DataSet();
+
+        public String descripcion(string producto)
+        {
+            ad = new SqlDataAdapter("select descripcion from productos where producto = '" + producto + "'", cadena);
+            ad.Fill(ds, "descripcion");
+            return ds.GetXml();
+        }
+        public String precio(string producto)
+        {
+            ad1 = new SqlDataAdapter("select precio from productos where producto = '" + producto + "'", cadena);
+            ad1.Fill(ds, "descripcion");
+            return ds.GetXml();
+        }
+
+        public String stock()
+        {
+            ad2 = new SqlDataAdapter("select stock from productos", cadena);
+            ad2.Fill(ds, "stock");
+            return ds.GetXml();
+        }
+
+        public String stockminimo()
+        {
+            ad3 = new SqlDataAdapter("select stock from productos", cadena);
+            ad3.Fill(ds, "stockminimo");
+            return ds.GetXml();
+        }
+
+    }
+}
+
+CLIENT (ASP.Net).
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Data;
+using System.Xml;
+
+public partial class _Default : System.Web.UI.Page
+{
+    DataSet ds = new DataSet();
+    XmlDocument xmldoc;
+    ServiceReference1.Service1Client servicio = new ServiceReference1.Service1Client();
+    protected void Page_Load(object sender, EventArgs e)
+    {
+
+    }
+
+    protected void Button1_Click(object sender, EventArgs e)
+    {
+        if (RadioButtonList1.SelectedValue.Equals("Descripcion"))
+        {
+            xmldoc = new XmlDocument();
+            String docxml = servicio.descripcion(TextBox1.Text);
+            xmldoc.LoadXml(docxml);
+            String rutaxml = Server.MapPath(".") + "\\" + "descripcion.xml";
+            xmldoc.Save(rutaxml);
+            ds.ReadXml(rutaxml);
+            if (ds.Tables.Count == 0)
+            {
+                Label1.Text = "SIN RESULTADOS EN LA CONSULTA";
+            }
+            else
+            {
+                this.GridView1.DataSource = ds;
+                this.GridView1.DataMember = ds.Tables[0].TableName;
+                this.GridView1.DataBind();
+            }
+        } else if (RadioButtonList1.SelectedValue.Equals("precio"))
+        {
+            xmldoc = new XmlDocument();
+            String docxml = servicio.precio(TextBox1.Text);
+            xmldoc.LoadXml(docxml);
+            String rutaxml = Server.MapPath(".") + "\\" + "precio.xml";
+            xmldoc.Save(rutaxml);
+            ds.ReadXml(rutaxml);
+            if (ds.Tables.Count == 0)
+            {
+                Label1.Text = "SIN RESULTADOS EN LA CONSULTA";
+            }
+            else
+            {
+                this.GridView1.DataSource = ds;
+                this.GridView1.DataMember = ds.Tables[0].TableName;
+                this.GridView1.DataBind();
+            }
+        } else if (RadioButtonList1.SelectedValue.Equals("stock"))
+        {
+            xmldoc = new XmlDocument();
+            String docxml = servicio.stock();
+            xmldoc.LoadXml(docxml);
+            String rutaxml = Server.MapPath(".") + "\\" + "stock.xml";
+            xmldoc.Save(rutaxml);
+            ds.ReadXml(rutaxml);
+            if (ds.Tables.Count == 0)
+            {
+                Label1.Text = "SIN RESULTADOS EN LA CONSULTA";
+            }
+            else
+            {
+                this.GridView1.DataSource = ds;
+                this.GridView1.DataMember = ds.Tables[0].TableName;
+                this.GridView1.DataBind();
+            }
+        } else
+        {
+            xmldoc = new XmlDocument();
+            String docxml = servicio.stockminimo();
+            xmldoc.LoadXml(docxml);
+            String rutaxml = Server.MapPath(".") + "\\" + "stockminimo.xml";
+            xmldoc.Save(rutaxml);
+            ds.ReadXml(rutaxml);
+            if (ds.Tables.Count == 0)
+            {
+                Label1.Text = "SIN RESULTADOS EN LA CONSULTA";
+            }
+            else
+            {
+                this.GridView1.DataSource = ds;
+                this.GridView1.DataMember = ds.Tables[0].TableName;
+                this.GridView1.DataBind();
+            }
+        }
+
+    }
+}

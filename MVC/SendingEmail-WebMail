@@ -1,0 +1,168 @@
+MODEL.
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
+
+namespace PruebaEmail.Models
+{
+    class ClientModel
+    {
+        [DataType(DataType.EmailAddress), Display(Name = "TO:")]
+        [Required]
+        public string ToEmail { get; set; }
+        [DataType(DataType.EmailAddress), Display(Name = "CC:")]
+        [Required]
+        public string Cc { get; set; }
+        [DataType(DataType.DateTime), Display(Name = "Date")]
+        [Required]
+        public DateTime Date { get; set; }
+        [Display(Name = "Title")]
+        public string Title { get; set; }
+        [DataType(DataType.MultilineText), Display(Name = "TEXT:")]
+        [Required]
+        public string Text { get; set; }
+    }
+}
+
+CONTROLLER.
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+
+namespace PruebaEmail.Controllers
+{
+    public class SendingEmailController : Controller
+    {
+        // GET: SendingEmail
+        public ActionResult Index()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult SendingEmailView()
+        {
+            return View();
+        }
+    }
+}
+
+VIEW.
+
+-- Index --
+
+@model PruebaEmail.Models.ClientModel
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+
+@using (Html.BeginForm("SendingEmailView", "Home", FormMethod.Post)) 
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        <h4>ClientModel</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.ToEmail, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.ToEmail, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.ToEmail, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Cc, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Cc, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Cc, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Text, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Text, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Text, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+
+-- SendingEmailView --
+
+
+@{
+    ViewBag.Title = "SendingEmailView";
+}
+
+<h2>SendingEmailView</h2>
+
+@{
+    try
+    {
+        //parameters to send email
+        string ToEmail, FromOrSenderEmail = "elias.merabet.p@gmail.com", Cc, Title, Text;
+
+        //Reading values from form collection (Querystring) and assigning values to parameters
+        ToEmail = Request["ToEmail"].ToString();
+        Cc = Request["Cc"].ToString();
+        Title = Request["Title"].ToString();
+        Text = Request["Text"].ToString();
+        //Configuring webMail class to send emails
+        WebMail.SmtpServer = "smtp.gmail.com"; //gmail smtp server
+        WebMail.SmtpPort = 587; //gmail port to send emails
+        WebMail.SmtpUseDefaultCredentials = true;
+        WebMail.EnableSsl = true; //sending emails with secure protocol
+        WebMail.UserName = FromOrSenderEmail;//EmailId used to send emails from application
+        WebMail.Password = "My_password";
+        WebMail.From = FromOrSenderEmail; //email sender email address.
+
+        //Sending email
+        WebMail.Send(to: ToEmail, subject: Title, body: Text, cc: Cc, isBodyHtml: true);
+        <hr />
+        <div class="text-success">
+            Email Sent Successfully.
+        </div>
+    }
+    catch (Exception)
+    {
+        <div class="text-danger">
+            Problem while sending email, please check gmail server details.
+        </div>
+    }
+}

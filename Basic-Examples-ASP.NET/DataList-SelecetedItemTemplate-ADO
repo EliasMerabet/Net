@@ -1,0 +1,105 @@
+ASP.
+<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="_Default" %>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+    <style type="text/css">
+        .auto-style1 {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <form id="form1" runat="server">
+    <div>
+    
+        <asp:DataList ID="DataList1" runat="server" BackColor="#DEBA84" BorderColor="#DEBA84" BorderStyle="None" BorderWidth="1px" CellPadding="3" CellSpacing="2" GridLines="Both" RepeatColumns="3" OnItemCommand="DataList1_ItemCommand">
+            <FooterStyle BackColor="#F7DFB5" ForeColor="#8C4510" />
+            <HeaderStyle BackColor="#A55129" Font-Bold="True" ForeColor="White" />
+            <HeaderTemplate>
+                ESTADIOS PRIMERA DIVISIÓN
+            </HeaderTemplate>
+            <ItemStyle BackColor="#FFF7E7" ForeColor="#8C4510" />
+            <ItemTemplate>
+                <asp:LinkButton ID="LinkButton1" runat="server"><%#Eval("Nombre")%></asp:LinkButton>
+            </ItemTemplate>
+            <SelectedItemStyle BackColor="#738A9C" Font-Bold="True" ForeColor="White" />
+            <SelectedItemTemplate>
+                <table class="auto-style1">
+                    <tr>
+                        <td>Dirección: </td>
+                        <td>
+                            <asp:Label ID="Label1" runat="server" Text='<%#Eval("Direccion")%>'></asp:Label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Aforo: </td>
+                        <td>
+                            <asp:Label ID="Label2" runat="server" Text='<%#Eval("Aforo")%>'></asp:Label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Año de Construcción</td>
+                        <td>
+                            <asp:Label ID="Label3" runat="server" Text='<%#Eval("Construccion")%>'></asp:Label>
+                        </td>
+                    </tr>
+                </table>
+            </SelectedItemTemplate>
+        </asp:DataList>
+    
+    </div>
+    </form>
+</body>
+</html>
+
+CLASS.
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Data.SqlClient;
+using System.Data;
+
+public partial class _Default : System.Web.UI.Page
+{
+
+    static string Cadena = "Data Source=.;Initial Catalog=Futbol;Integrated Security=True";
+    DataSet Ds = new DataSet();
+    SqlDataAdapter Ad = new SqlDataAdapter("Select * from Equipos", Cadena);
+
+
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        Ad.Fill(Ds, "Estadios");
+        this.DataList1.RepeatLayout = RepeatLayout.Table;
+        this.DataList1.BorderWidth = Unit.Pixel(1);
+        this.DataList1.BorderColor = System.Drawing.Color.Black;
+        this.DataList1.GridLines = GridLines.Both;
+
+        if (this.IsPostBack == true) return;
+        Cargar();
+
+    }
+
+    private void Cargar()
+    {
+        this.DataList1.DataSource = Ds;
+        this.DataList1.DataMember = "Estadios";
+        this.DataList1.DataBind();
+    }
+
+
+
+    protected void DataList1_ItemCommand(object source, DataListCommandEventArgs e)
+    {
+        this.DataList1.SelectedIndex = e.Item.ItemIndex;
+        Cargar();
+    }
+}

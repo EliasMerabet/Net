@@ -1,0 +1,57 @@
+ASP.
+<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="_Default" %>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+</head>
+<body>
+    <form id="form1" runat="server">
+    <div>
+    
+        <asp:ScriptManager ID="ScriptManager1" runat="server">
+        </asp:ScriptManager>
+        <asp:Timer ID="Timer1" runat="server" Interval="5000" OnTick="Timer1_Tick">
+        </asp:Timer>
+    
+    </div>
+        <p>
+            LA FIESTA DE LOS CAMPEONES...</p>
+        <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
+            <ContentTemplate>
+                <asp:Image ID="Image1" runat="server" />
+            </ContentTemplate>
+            <Triggers>
+                <asp:AsyncPostBackTrigger ControlID="Timer1" EventName="Tick" />
+            </Triggers>
+        </asp:UpdatePanel>
+    </form>
+</body>
+</html>
+
+CLASS.
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+public partial class _Default : System.Web.UI.Page
+{
+    protected void Page_Load(object sender, EventArgs e)
+    {
+
+    }
+
+    protected void Timer1_Tick(object sender, EventArgs e)
+    {
+        int i;
+        i = new Random().Next(1, 9);
+        Image1.ImageUrl = "Recursos4\\Foto" + i + ".jpg";
+
+    }
+}

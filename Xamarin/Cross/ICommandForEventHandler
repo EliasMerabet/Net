@@ -1,0 +1,35 @@
+XAML.CS.
+
+public partial class XamlClass : CarouselPage
+    {
+
+        public ICommand ButtonCommand
+        {
+            get
+            {
+                return new Command(async(sender) => 
+                {
+                    var action = await DisplayActionSheet("titulo", null, "Cancel", "Iniciar", "Pausar", "Bloquear", "Terminar");
+                    if (action == "Iniciar")
+                    {
+                        var answer = await DisplayAlert("Titulo2", "Elija opcion", "No", "Si");
+                        if (answer == false)
+                        {
+                            var p = (Button)sender;
+                            var identificador = p.Text.Split('%');
+                            var nombreInt = identificador[0];
+                            // .........
+                        }
+                    }
+                });
+            }
+        }
+        
+        // ............
+        
+  LISTVIEW.CS
+  
+                Button bt = new Button { Image = "ImagenDeButon.png", HorizontalOptions = LayoutOptions.FillAndExpand, VerticalOptions = LayoutOptions.FillAndExpand, BackgroundColor = Enums.getColor("honeydew"), BorderColor = Color.Black, };
+                bt.SetBinding(Button.TextProperty, new Binding("InformacionAsociadaAButton"));
+                bt.SetBinding(Button.CommandProperty, new Binding("ButtonCommand", source: page));
+                bt.CommandParameter = estadoTarea;

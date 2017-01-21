@@ -1,0 +1,68 @@
+XAML.CS.
+
+namespace NAMESPACE
+{
+    public class MasterPageCS : ContentPage
+    {
+        public ListView ListView { get { return listView; } }
+
+        ListView listView;
+
+        public MasterPageCS(int numeroI)
+        {
+            var masterPageItems = new List<MasterPageItem>();
+            var model = new MODEL();
+
+            foreach (var m in model)
+            {
+                var item = new MasterPageItem { Title = inter.Nombre, TargetType = typeof(I), IconSource = "task.png"};
+                masterPageItems.Add(item);
+            }
+
+            listView = new ListView
+            {
+                ItemsSource = masterPageItems,
+                ItemTemplate = new DataTemplate(() =>
+                {
+                    var imageCell = new ImageCell();
+                    imageCell.SetBinding(TextCell.TextProperty, "Title");
+                    imageCell.SetBinding(ImageCell.ImageSourceProperty, "IconSource");
+                    return imageCell;
+                }),
+                VerticalOptions = LayoutOptions.FillAndExpand,
+                SeparatorVisibility = SeparatorVisibility.None
+            };
+
+            Padding = new Thickness(0, 30, 0, 0);
+            Title = "TITLE";
+            Icon = "menu.png";
+
+            Content = new StackLayout
+            {
+                VerticalOptions = LayoutOptions.FillAndExpand,
+                Children = {
+                    listView
+                }
+            };
+        }
+        
+XAML.
+
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="NAMESPACE.MasterPage"
+             Padding="0,30,0,0"
+             Title="TITLE">
+  
+  <ContentPage.Content>
+    <StackLayout VerticalOptions="FillAndExpand">
+      <ListView x:Name="listView" VerticalOptions="FillAndExpand" SeparatorVisibility="None">
+        <ListView.ItemTemplate>
+          <DataTemplate>
+            <ImageCell Text="{Binding Title}" ImageSource="{Binding IconSource}"/>
+          </DataTemplate>
+        </ListView.ItemTemplate>
+      </ListView>
+    </StackLayout>
+  </ContentPage.Content>
+</ContentPage>

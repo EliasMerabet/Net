@@ -1,0 +1,309 @@
+// VIEW
+
+@{
+    ViewBag.Title = "Buscador";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using PagedList.Mvc;
+@model WebApplication1.Models.ViewModel.VMBuscadorList
+
+<h1>Buscador</h1>
+
+@using (Html.BeginForm("Buscador", "Home", FormMethod.Post, new { @class = "form-login" }))
+{
+
+    <div>
+
+        <div>
+            @Html.Label("", "Nombre: ")<br />
+            @Html.TextBoxFor(p => p.nombre, "")
+        </div>
+
+        <br />
+
+        <label for="dtp_input2">Fecha de Creacion Inicio (min)</label>
+        <div class="form-group">
+            <div class="input-group date form_date col-md-5" data-date="" data-date-format="dd MM yyyy" data-link-field="dtp_input2" data-link-format="dd-mm-yyyy">
+                <input id="dpFCI" class="form-control" name="dpFCI" size="16" type="text">
+            </div>
+        </div>
+
+    </div>
+
+    <br /><br />
+
+    @Html.TextBox("submitBuscar", "Buscar", new { @type = "submit" })
+}
+
+<br /><br />
+
+@if (Model != null)
+{
+
+    <table style="border:2px solid black;">
+
+        <tr style="border:2px solid black;">
+            <th>Nombre</th>
+            <th>Fecha Creacion</th>
+            <th>Fecha Modificacion</th>
+            <th>Grado Dificultad</th>
+            <th>Tiempo Estimado</th>
+            <th>Tipo de Pregunta</th>
+        </tr>
+
+        @foreach (var resultado in Model.lista)
+        {
+            <tr style="border:2px solid black;">
+                <td>@resultado.nombre</td>
+                <td>@resultado.fechaCreacion</td>
+                <td>@resultado.fechaModificacion</td>
+                <td>@resultado.gradoDificultad</td>
+                <td>@resultado.tiempoEstimado</td>
+                <td>@resultado.tipoPregunta</td>
+            </tr>
+        }
+
+        <input type="hidden" value="1" id="control" />
+
+        @Html.PagedListPager(Model.lista, page => Url.Action("Buscador",new { page, nombre = @Model.nombre, Model.dpFCI, Model.control}))
+        Showing @Model.lista.FirstItemOnPage to @Model.lista.LastItemOnPage of @Model.lista.TotalItemCount Preguntas
+    </table>
+}
+
+<script type="text/javascript" src="~/Utils/jquery/jquery-1.8.3.min.js" charset="UTF-8"></script>
+<script type="text/javascript" src="~/Utils/js/bootstrap.min.js"></script>
+<script src="~/Utils/js/bootstrap-datetimepicker.js" type="text/javascript"></script>
+<script src="~/Utils/js/locales/bootstrap-datetimepicker.es.js" type="text/javascript"></script>   
+
+<script>
+    $('#dpFCI').datetimepicker({
+        language: 'es',
+        weekStart: 1,
+        todayBtn: 1,
+        autoclose: 1,
+        todayHighlight: 1,
+        startView: 2,
+        minView: 2,
+        forceParse: 0
+    });
+</script>
+
+
+// CONTROLLER.
+
+  public ActionResult Buscador(VMBuscadorList vm, int? control)
+        {
+            if (control == null) {
+                return View();
+            }
+            else
+            {
+                return View(BlBuscador.BuscadorGet(vm)); 
+            }
+        }
+
+        [HttpPost]
+        public ActionResult Buscador(VMBuscadorList vm)
+        {
+            return View(BlBuscador.BuscadorPost(vm));
+        }
+// DATA ACCESS
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using WebApplication1.Models.ViewModel;
+
+namespace WebApplication1
+{
+    public partial class Preguntas
+    {
+
+        public static List<VMBuscadorPreguntas> preguntasFiltradasNombre(string nombre)
+        {
+            PreguntasEntities entidad = new PreguntasEntities();
+            List<Preguntas> lista = entidad.Preguntas.Where(p => p.nombre == nombre).OrderBy(p => p.codigo).ToList();
+
+            List<VMBuscadorPreguntas> listaBuscador = new List<VMBuscadorPreguntas>();
+
+            foreach (var preguntas in lista)
+            {
+                VMBuscadorPreguntas preguntaBuscador = new VMBuscadorPreguntas();
+                preguntaBuscador.categoriaPregunta = preguntas.categoriaPregunta;
+                preguntaBuscador.descripcion = preguntas.descripcion;
+                preguntaBuscador.fechaCreacion = preguntas.fechaCreacion;
+                preguntaBuscador.fechaModificacion = preguntas.fechaModificacion;
+                preguntaBuscador.gradoDificultad = preguntas.gradoDificultad;
+                preguntaBuscador.nombre = preguntas.nombre;
+                preguntaBuscador.tiempoEstimado = preguntas.tiempoEstimado;
+                preguntaBuscador.tipoPregunta = preguntas.tipoPregunta;
+
+                listaBuscador.Add(preguntaBuscador);
+            }
+            return listaBuscador;
+        }
+
+        public static List<VMBuscadorPreguntas> preguntasFiltradasFC(DateTime dpFC_I)
+        {
+            PreguntasEntities entidad = new PreguntasEntities();
+            List<Preguntas> lista = entidad.Preguntas.Where(p => p.fechaCreacion > dpFC_I).OrderBy(p => p.codigo).ToList();
+
+            List<VMBuscadorPreguntas> listaBuscador = new List<VMBuscadorPreguntas>();
+
+            foreach (var preguntas in lista)
+            {
+                VMBuscadorPreguntas preguntaBuscador = new VMBuscadorPreguntas();
+                preguntaBuscador.categoriaPregunta = preguntas.categoriaPregunta;
+                preguntaBuscador.descripcion = preguntas.descripcion;
+                preguntaBuscador.fechaCreacion = preguntas.fechaCreacion;
+                preguntaBuscador.fechaModificacion = preguntas.fechaModificacion;
+                preguntaBuscador.gradoDificultad = preguntas.gradoDificultad;
+                preguntaBuscador.nombre = preguntas.nombre;
+                preguntaBuscador.tiempoEstimado = preguntas.tiempoEstimado;
+                preguntaBuscador.tipoPregunta = preguntas.tipoPregunta;
+
+                listaBuscador.Add(preguntaBuscador);
+            }
+            return listaBuscador;
+        }
+
+        public static List<VMBuscadorPreguntas> preguntasFiltradasTotal(string nombre, DateTime dpFC_I)
+        {
+            PreguntasEntities entidad = new PreguntasEntities();
+            List<Preguntas> lista = entidad.Preguntas.Where(p => p.fechaCreacion > dpFC_I && p.nombre == nombre).OrderBy(p => p.codigo).ToList();
+
+            List<VMBuscadorPreguntas> listaBuscador = new List<VMBuscadorPreguntas>();
+
+            foreach (var preguntas in lista)
+            {
+                VMBuscadorPreguntas preguntaBuscador = new VMBuscadorPreguntas();
+                preguntaBuscador.categoriaPregunta = preguntas.categoriaPregunta;
+                preguntaBuscador.descripcion = preguntas.descripcion;
+                preguntaBuscador.fechaCreacion = preguntas.fechaCreacion;
+                preguntaBuscador.fechaModificacion = preguntas.fechaModificacion;
+                preguntaBuscador.gradoDificultad = preguntas.gradoDificultad;
+                preguntaBuscador.nombre = preguntas.nombre;
+                preguntaBuscador.tiempoEstimado = preguntas.tiempoEstimado;
+                preguntaBuscador.tipoPregunta = preguntas.tipoPregunta;
+
+                listaBuscador.Add(preguntaBuscador);
+            }
+            return listaBuscador;
+        }
+
+    }
+}
+
+
+// BUSINESSLOGIC.
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using PagedList;
+using WebApplication1.Models.ViewModel;
+
+namespace WebApplication1.Models.BusinessLogic
+{
+    public class BlBuscador
+    {
+        public static VMBuscadorList BuscadorGet(VMBuscadorList vm)
+        {
+            int page1 = vm.page;
+            IPagedList<VMBuscadorPreguntas> resultado = null;
+            if (vm.nombre != null && vm.dpFCI != null)
+            {
+                DateTime dt = Convert.ToDateTime(vm.dpFCI);
+                resultado = Preguntas.preguntasFiltradasTotal(vm.nombre, dt).ToPagedList(page1, 2);
+            }
+            else if (vm.nombre == null)
+            {
+                DateTime dt = Convert.ToDateTime(vm.dpFCI);
+                resultado = Preguntas.preguntasFiltradasFC(dt).ToPagedList(page1, 2);
+            }
+            else if (vm.dpFCI == null)
+            {
+                resultado = Preguntas.preguntasFiltradasNombre(vm.nombre).ToPagedList(page1, 2);
+            }
+            vm.control = 1;
+            vm.lista = resultado;
+            return vm;
+        }
+
+        public static VMBuscadorList BuscadorPost(VMBuscadorList vm)
+        {
+            vm.page = 1;
+            IPagedList<VMBuscadorPreguntas> resultado = null;
+            if (vm.nombre != null && vm.dpFCI != null)
+            {
+                DateTime dt = Convert.ToDateTime(vm.dpFCI);
+                resultado = Preguntas.preguntasFiltradasTotal(vm.nombre, dt).ToPagedList(vm.page, 2);
+            }
+            else if (vm.nombre == null)
+            {
+                DateTime dt = Convert.ToDateTime(vm.dpFCI);
+                resultado = Preguntas.preguntasFiltradasFC(dt).ToPagedList(vm.page, 2);
+            }
+            else if (vm.dpFCI == null)
+            {
+                resultado = Preguntas.preguntasFiltradasNombre(vm.nombre).ToPagedList(vm.page, 2);
+            }
+            vm.control = 1;
+            vm.lista = resultado;
+            return vm;
+        }
+
+    }
+}
+
+
+// VIEWMODEL.
+
+// View Model PREGUNTAS.
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+namespace WebApplication1.Models.ViewModel
+{
+    public class VMBuscadorPreguntas
+    {
+
+        public String nombre { get; set; }
+        public int categoriaPregunta { get; set; }
+        public String descripcion { get; set; }
+        public DateTime fechaCreacion { get; set; }
+        public DateTime fechaModificacion { get; set; }
+        public int gradoDificultad { get; set; }
+        public int tiempoEstimado { get; set; }
+        public int tipoPregunta { get; set; }
+
+    }
+}
+
+
+//MVievModel Buscador. (Contanins List<MVPreguntas>)
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using PagedList;
+
+namespace WebApplication1.Models.ViewModel
+{
+    public class VMBuscadorList
+    {
+
+        public IPagedList<VMBuscadorPreguntas> lista { get; set; }
+        public int control { get; set; }
+        public string nombre { get; set; }
+        public string dpFCI { get; set; }
+        public int page { get; set; }
+
+    }
+}

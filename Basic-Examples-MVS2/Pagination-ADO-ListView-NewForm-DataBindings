@@ -1,0 +1,170 @@
+FORM 2.
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+using System.Data.SqlClient;
+
+namespace MVS19_Paginacion
+{
+    public partial class Form2 : Form
+    {
+
+        static string cadena = "Data Source=.;Initial Catalog=Hospital;Integrated Security=True";
+        SqlDataAdapter AdHospital = new SqlDataAdapter("Select * from Hospital", cadena);
+        SqlDataAdapter AdSala = new SqlDataAdapter("Select * from Sala", cadena);
+        DataSet Ds = new DataSet();
+
+        public Form2()
+        {
+            InitializeComponent();
+        }
+
+        private void Form2_Load(object sender, EventArgs e)
+        {
+            AdHospital.Fill(Ds, "Hospital");
+            textBox1.DataBindings.Add(new Binding("Text", Ds, "Hospital.Hospital_cod"));
+            textBox2.DataBindings.Add(new Binding("Text", Ds, "Hospital.Nombre"));
+            textBox1.ReadOnly = true;
+            textBox2.ReadOnly = true;
+
+            AdSala.Fill(Ds, "Sala");
+            Ds.Relations.Add("Hospital_Sala", Ds.Tables["Hospital"].Columns["Hospital_cod"], Ds.Tables["Sala"].Columns["Hospital_cod"]);
+
+            int Tam = this.listView1.Size.Width / 2;
+
+            for (int i = 0; i < 2; i++)
+            {
+                this.listView1.Columns.Add(Ds.Tables["Sala"].Columns[i].ColumnName, Tam, HorizontalAlignment.Center);
+            }
+
+            listView1.View = View.Details;
+            listView1.FullRowSelect = true;
+            listView1.CheckBoxes = true;
+            listView1.GridLines = true;
+            listView1.BorderStyle = BorderStyle.FixedSingle;
+
+            Ds.Tables[0].PrimaryKey = new DataColumn[] {Ds.Tables[0].Columns[0]};
+            CargarSalas();
+        }
+
+        private void CargarSalas()
+        {
+            DataRow Fila;
+            short i;
+            DataRow[] Registros;
+            ListViewItem It;
+            Fila = Ds.Tables[0].Rows.Find(textBox1.Text);
+            Registros = Fila.GetChildRows("Hospital_Sala");
+            listView1.Items.Clear();
+            for (i = 0; i < Registros.GetUpperBound(0); i++)
+            {
+                It = new ListViewItem();
+                It.Text = Registros[i]["Nombre"].ToString();
+                //Solo hay un subitem, por eso no lo recorro. Si no que accedo directamente.
+                It.SubItems.Add(Registros[i]["Num_Cama"].ToString());
+                listView1.Items.Add(It);
+            }
+        }
+
+        private void listView1_DoubleClick(object sender, EventArgs e)
+        {
+            Form3 F2 = new Form3();
+            DataRow[] Registros;
+            DataRow Fila;
+            short i;
+            DataTable Tabla = new DataTable();
+
+            Fila = Ds.Tables[0].Rows.Find(textBox1.Text);
+            Registros = Fila.GetChildRows("Hospital_Sala");
+
+            Tabla = Ds.Tables[1].Clone();
+            for (i = 0; i < Registros.GetUpperBound(0); i++)
+            {
+                Tabla.Rows.Add(Registros[i].ItemArray);
+            }
+
+            F2.Ds2.Tables.Add(Tabla);
+            F2.dataGridView1.ReadOnly = true;
+            F2.dataGridView1.DataSource = F2.Ds2;
+            F2.dataGridView1.DataMember = F2.Ds2.Tables[0].TableName;
+            F2.textBox1.DataBindings.Add(new Binding("Text", F2.Ds2, F2.Ds2.Tables[0].TableName + ".Nombre"));
+            F2.textBox2.DataBindings.Add(new Binding("Text", F2.Ds2, F2.Ds2.Tables[0].TableName + ".Num_Cama"));
+            F2.ShowDialog();
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            BindingContext[Ds, "Hospital"].Position = 0;
+            CargarSalas();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            BindingContext[Ds, "Hospital"].Position -= 1;
+            CargarSalas();
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            BindingContext[Ds, "Hospital"].Position += 1;
+            CargarSalas();
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            BindingContext[Ds, "Hospital"].Position = BindingContext[Ds, "Hospital"].Count - 1;
+            CargarSalas();
+        }
+
+    }
+}
+
+FORM3.
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+
+namespace MVS19_Paginacion
+{
+    public partial class Form3 : Form
+    {
+
+        public DataSet Ds2 = new DataSet();
+
+        public Form3()
+        {
+            InitializeComponent();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            this.BindingContext[Ds2, Ds2.Tables[0].TableName].Position += 1;
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            this.BindingContext[Ds2, Ds2.Tables[0].TableName].Position -= 1;
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            this.BindingContext[Ds2, Ds2.Tables[0].TableName].Position = 0;
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            this.BindingContext[Ds2, Ds2.Tables[0].TableName].Position = this.BindingContext[Ds2, Ds2.Tables[0].TableName].Count - 1;
+        }
+    }
+}

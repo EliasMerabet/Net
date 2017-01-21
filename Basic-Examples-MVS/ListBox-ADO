@@ -1,0 +1,68 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+using System.Data.SqlClient;
+
+namespace MVS4_ADO
+{
+    public partial class Form1 : Form
+    {
+        static string cadena = "Data Source=.;Initial Catalog=Hospital;Integrated Security=True";
+        SqlConnection Cn = new SqlConnection(cadena);
+        SqlCommand Com = new SqlCommand();
+        SqlDataReader Datos;
+
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            this.LstEmpleados.Items.Clear();
+            if (this.textBox1.Text != string.Empty)
+            {
+                try
+                {
+
+                    Com.CommandText = "Select apellido from emp where apellido like '" + this.textBox1.Text + "%'";
+                    Datos = Com.ExecuteReader();
+                    if (Datos.HasRows == true)
+                    {
+                        while (Datos.Read())
+                        {
+                            this.LstEmpleados.Items.Add(Datos.GetString(0));
+                        }
+
+                    }
+                    else
+                    {
+                        this.LstEmpleados.Items.Add("SIN RESULTADOS");
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "ERROR DE SQL SERVER", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                finally
+                {
+                    Datos.Close();
+                }
+            }
+
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            Com.Connection = Cn;
+            Com.CommandType = CommandType.Text;
+            Cn.Open();
+        }
+    }
+}

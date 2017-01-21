@@ -1,0 +1,41 @@
+        private void Form2_Load(object sender, EventArgs e)
+        {
+            documento = XDocument.Load("Novedades.xml");
+
+            var pelis = from peliculas in documento.Descendants("TITULOS")
+                       select new
+                       {
+                           titulo = peliculas.Attribute("PELICULA").Value
+                       };
+
+            foreach (var peli in pelis){
+                this.listBox1.Items.Add(peli.titulo);
+            }
+
+        }
+
+        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string titulo = this.listBox1.SelectedItem.ToString();
+
+            var datoPeli = from peliculas in documento.Descendants("TITULOS")
+                           where peliculas.Attribute("PELICULA").Value == titulo
+                           select new
+                           {
+                               distribuidor = peliculas.Element("DISTRIBUIDOR").Value,
+                               precio = peliculas.Element("PRECIO").Value,
+                               director = peliculas.Element("DIRECTOR").Value,
+                               actores = peliculas.Element("ACTORES").Value,
+                               argumento = peliculas.Element("ARGUMENTO").Value,
+                               imagen = peliculas.Element("IMAGEN").Value
+                           };
+
+            this.label3.Text = datoPeli.First().distribuidor;
+            this.label5.Text = datoPeli.First().precio;
+            this.label7.Text = datoPeli.First().director;
+            this.label9.Text = datoPeli.First().actores;
+
+            this.richTextBox1.Text = datoPeli.First().argumento;
+
+            this.pictureBox1.Image = Image.FromFile("Imagenes/" + datoPeli.First().imagen);
+        }

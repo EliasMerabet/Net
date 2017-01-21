@@ -1,0 +1,83 @@
+ASP.
+<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="_Default" %>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+    <style type="text/css">
+        .auto-style1 {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <form id="form1" runat="server">
+    <div>
+    
+        <asp:DataList ID="DataList1" runat="server" RepeatColumns="2">
+            <ItemTemplate>
+                <table class="auto-style1">
+                    <tr>
+                        <td rowspan="3">
+                            <img alt="" src="" />
+                        </td>
+                        <td>
+                            <asp:Label ID="Label1" runat="server" Text="Título: "><%# Eval("nombre")%></asp:Label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <asp:Label ID="Label2" runat="server" Text="Formato: "><%# Eval("tipopeli")%></asp:Label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <asp:Label ID="Label3" runat="server" Text="Observaciones: "><%# Eval("observaciones")%></asp:Label>
+                        </td>
+                    </tr>
+                </table>
+            </ItemTemplate>
+        </asp:DataList>
+    
+    </div>
+    </form>
+</body>
+</html>
+
+CLASS.
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Data.SqlClient;
+using System.Data;
+
+public partial class _Default : System.Web.UI.Page
+{
+
+    static string Cadena = "Data Source=.;Initial Catalog=Videoclub;Integrated Security=True";
+
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        if (this.IsPostBack == true) return;
+        CargarDatos();
+    }
+
+    private void CargarDatos()
+    {
+        SqlConnection cn = new SqlConnection(Cadena);
+        SqlCommand cmd = new SqlCommand("select * from peliculas", cn);
+        SqlDataAdapter adaptador = new SqlDataAdapter(cmd);
+        DataSet datos = new DataSet();
+        adaptador.Fill(datos, "peliculas");
+        DataList1.DataSource = datos;
+        DataList1.DataMember = "peliculas";
+        DataList1.DataBind();
+
+    }
+}

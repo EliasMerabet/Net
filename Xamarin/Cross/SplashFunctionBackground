@@ -1,0 +1,11 @@
+        protected override async void OnStart()
+        {
+
+            await Task.Delay(2500);
+            for (int i = 0; i < 1000; i++)
+            {
+                // AQUI METER LA CONEXION AL SERVICIO WEB Y TRAER DATOS NECESARIOS.
+                Debug.WriteLine("BACKGROUND CONSEGUIDO!!!");
+            }
+            await App.Current.MainPage.Navigation.PushModalAsync(new Login());
+        }

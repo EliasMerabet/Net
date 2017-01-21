@@ -1,0 +1,63 @@
+private void Form1_Load(object sender, EventArgs e)
+        {
+            this.CargarEmpleados();
+        }
+
+        public void CargarEmpleados()
+        {
+            var consulta = from em in entidad.EMP
+                           select new
+                           {
+                               Apellido = em.APELLIDO
+                               ,
+                               Oficio = em.OFICIO
+                               ,
+                               Salario = em.SALARIO
+                               ,
+                               Comision = em.COMISION
+
+                           };
+            this.dataGridView1.DataSource = consulta.ToList();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            EMP ObjEmp = new EMP();
+            ObjEmp.APELLIDO = "Benito Floro";
+            ObjEmp.SALARIO = 12345;
+            ObjEmp.OFICIO = "Programador";
+            ObjEmp.COMISION = 0;
+            entidad.EMP.Add(ObjEmp);
+            entidad.SaveChanges();
+            this.CargarEmpleados();
+            MessageBox.Show("Dato insertado correctamente");
+
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            var consulta2 =
+            from d in entidad.EMP
+            where d.EMP_NO == 7900
+            select d;
+
+            consulta2.First().APELLIDO = "AAAAA";
+            consulta2.First().OFICIO = "PROGRAMADOR";
+            entidad.SaveChanges();
+            this.CargarEmpleados();
+            MessageBox.Show("Dato modificado correctamente");
+
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            var consulta =
+            (from d in entidad.EMP
+             where d.EMP_NO == 7499
+             select d).First();
+            entidad.EMP.Remove(consulta);
+            entidad.SaveChanges();
+            this.CargarEmpleados();
+            MessageBox.Show("Dato eliminado correctamente");
+
+        }

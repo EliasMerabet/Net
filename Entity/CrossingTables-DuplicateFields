@@ -1,0 +1,18 @@
+var duplicates_emails = emails.Select((t, i) => new { Index = i, Text = t }).GroupBy(g => g.Text).Where(g => g.Count() > 1).ToList();
+foreach (var group_emails in duplicates_emails)
+  {
+    List<int> indexes_emails = new List<int>();
+    foreach (var x in group_emails)
+      {
+        indexes_emails.Add(x.Index);
+      }
+
+    var duplicates_deals_id = deal_ids.Select((v, i) => new { Index = i, Value = v }).Where(m => (indexes_emails.Contains(m.Index))).GroupBy(g => g.Value).Where(g => g.Count() > 1).ToList();
+    foreach (var group_deals_id in duplicates_deals_id)
+      {
+        List<int> indexes_deals_id = new List<int>();
+        foreach (var x in group_deals_id)
+          {
+            indexes_deals_id.Add(x.Index);
+          }
+        var not_duplicates_credits_cards = credits_cards.Select((v, i) => new { Index = i + 1, Value = v }).Where(m => (indexes_deals_id.Contains(m.Index))).GroupBy(g => g.Value).Where(g => g.Count() == 1).SelectMany(g => g, (g, x) => x.Index).ToList();

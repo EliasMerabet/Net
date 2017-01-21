@@ -1,0 +1,41 @@
+VIEW.
+@model List<String>
+
+<h2>Probando un DataList dinámico</h2>
+
+<form>
+    <fieldset>
+        <legend>Probando los datalist</legend>
+        <label>
+            Busca en la agenda:
+            <input type="text" name="agenda" list="agenda" />
+            <datalist id="agenda">
+                @foreach (var item in Model)
+                {
+                    <option value="@item"></option>
+                }
+            </datalist>
+        </label>
+    </fieldset>
+</form>
+
+CONTROLLER.
+        public ActionResult vista1()
+        {
+            List<String> lista = new List<string>();
+            lista.Add("Ana");
+            lista.Add("Andrea");
+            lista.Add("Adrian");
+            lista.Add("Maria");
+            lista.Add("Lucia");
+            lista.Add("Silvia");
+            lista.Add("Gema");
+            lista.Add("Carlos");
+            lista.Add("Pedro");
+            lista.Add("Javier");
+            lista.Add("Antonio");
+            lista.Add("Oscar");
+            lista.Add("Maite");
+            return View(lista);
+
+        }

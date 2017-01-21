@@ -1,0 +1,103 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+
+namespace MVS1_Introduccion
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+          int numero,numero3;
+			    double numero2;
+								
+			    numero2=double.Parse(textBox1.Text);
+			    numero2=numero2/23;
+			    numero3=(int)numero2;
+			    numero3=numero3*23;
+			    numero=int.Parse(textBox1.Text)-numero3;
+            switch (numero)
+            {
+                case 0: LBL1.Text = "T";
+                    break;
+                case 1: LBL1.Text = "R";
+                    break;
+                case 2: LBL1.Text = "W";
+                    break;
+                case 3: LBL1.Text = "A";
+                    break;
+                case 4: LBL1.Text = "G";
+                    break;
+                case 5: LBL1.Text = "M";
+                    break;
+                case 6: LBL1.Text = "Y";
+                    break;
+                case 7: LBL1.Text = "F";
+                    break;
+                case 8: LBL1.Text = "P";
+                    break;
+                case 9: LBL1.Text = "D";
+                    break;
+                case 10: LBL1.Text = "X";
+                    break;
+                case 11: LBL1.Text = "B";
+                    break;
+                case 12: LBL1.Text = "N";
+                    break;
+                case 13: LBL1.Text = "J";
+                    break;
+                case 14: LBL1.Text = "Z";
+                    break;
+                case 15: LBL1.Text = "S";
+                    break;
+                case 16: LBL1.Text = "Q";
+                    break;
+                case 17: LBL1.Text = "V";
+                    break;
+                case 18: LBL1.Text = "H";
+                    break;
+                case 19: LBL1.Text = "L";
+                    break;
+                case 20: LBL1.Text = "C";
+                    break;
+                case 21: LBL1.Text = "K";
+                    break;
+                case 22: LBL1.Text = "E";
+                    break;
+                case 23: LBL1.Text = "T";
+                    break;
+            }
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+          int numero,numero3;
+			    double numero2;
+          numero2=double.Parse(textBox1.Text);
+			    numero2=numero2/23;
+			    numero3=(int)numero2;
+          numero3=numero3*23;
+    			numero=int.Parse(textBox1.Text)-numero3;
+			    string LETRA="TRWAGMYFPDXBNJZSQVHLCKET";
+			    LBL1.Text=LETRA.Substring(numero,1); //Cuenta en base cero
+
+        }
+    }
+}
+
+

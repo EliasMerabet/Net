@@ -1,0 +1,111 @@
+VIEW.
+
+@using DevExpress.XtraScheduler;
+@Html.DevExpress().Scheduler(settings =>
+{
+    settings.Name = "scheduler";
+    settings.CallbackRouteValues = new { Controller = "Home", Action = "CalendarViewPartial" };
+
+    settings.Storage.Appointments.Assign(DXWebApplication1.Models.SchedulerStorageProvider.DefaultAppointmentStorage);
+    settings.Storage.Resources.Assign(DXWebApplication1.Models.SchedulerStorageProvider.DefaultResourceStorage);
+
+    settings.Storage.EnableReminders = false;
+
+    settings.OptionsCustomization.AllowAppointmentCreate = DevExpress.XtraScheduler.UsedAppointmentType.All;
+    settings.OptionsCustomization.AllowAppointmentEdit = DevExpress.XtraScheduler.UsedAppointmentType.All;
+    settings.OptionsCustomization.AllowAppointmentDelete = DevExpress.XtraScheduler.UsedAppointmentType.All;
+    settings.OptionsCustomization.AllowAppointmentResize = DevExpress.XtraScheduler.UsedAppointmentType.All;
+    settings.OptionsCustomization.AllowAppointmentMultiSelect = true;
+
+    //settings.Width = 0;
+    //settings.Views.DayView.Styles.ScrollAreaHeight = 125;
+
+    settings.Start = new DateTime(2016, 6, 30);
+    settings.GroupType = SchedulerGroupType.Date;
+    settings.Height = 250;
+    settings.ActiveViewType = SchedulerViewType.Timeline;
+    settings.Width = 600;
+    settings.OptionsView.FirstDayOfWeek = DevExpress.XtraScheduler.FirstDayOfWeek.Monday;
+    settings.OptionsToolTips.AppointmentDragToolTipCornerType = ToolTipCornerType.Rounded;
+    settings.OptionsMenu.EnableMenuScrolling = true;
+    settings.EnablePagingGestures = AutoBoolean.True;
+    // PARA DARLES STYLES CSS: settings.ControlStyle
+    // PARA DARLES CLASES CSS: settings.Attributes.CssStyle
+
+    settings.Views.MonthView.CellAutoHeightOptions.MaxHeight = 10;
+    settings.Views.MonthView.CellAutoHeightOptions.MinHeight = 5;
+    settings.Views.MonthView.DisplayName = "Citas";
+    settings.Views.MonthView.MenuCaption = "Citas1";
+    settings.Views.MonthView.WeekCount = 3;
+    settings.Views.MonthView.ShowMoreButtons = true;
+    settings.Views.MonthView.AppointmentDisplayOptions.ContinueArrowDisplayType = AppointmentContinueArrowDisplayType.Arrow;
+    settings.Views.MonthView.AppointmentDisplayOptions.ShowBordersForSameDayAppointments = true;
+    settings.Views.MonthView.AppointmentDisplayOptions.StartTimeVisibility = AppointmentTimeVisibility.Always;
+    settings.Views.MonthView.AppointmentDisplayOptions.TimeDisplayType = AppointmentTimeDisplayType.Clock;
+    settings.Views.MonthView.AppointmentDisplayOptions.AppointmentHeight = 10;
+    settings.Views.MonthView.AppointmentDisplayOptions.AppointmentAutoHeight = true;
+    
+    settings.Views.TimelineView.AppointmentDisplayOptions.AppointmentAutoHeight = true;
+    settings.Views.TimelineView.AppointmentDisplayOptions.TimeDisplayType = AppointmentTimeDisplayType.Clock;
+    settings.Views.TimelineView.DisplayName = "Citas";
+    settings.Views.TimelineView.MenuCaption = "Citas1";
+    settings.Views.TimelineView.ShowMoreButtons = true;
+    settings.Views.TimelineView.IntervalCount = 8;
+
+    settings.Views.DayView.DayCount = 1;
+    settings.Views.DayView.AppointmentDisplayOptions.AppointmentAutoHeight = true;
+    settings.Views.DayView.AppointmentDisplayOptions.AppointmentHeight = 10;
+    settings.Views.DayView.AppointmentDisplayOptions.TimeDisplayType = AppointmentTimeDisplayType.Clock;
+    settings.Views.DayView.DisplayName = "Citas";
+    settings.Views.DayView.MenuCaption = "Citas1";
+    settings.Views.DayView.ShowMoreButtons = true;
+    settings.Views.DayView.ShowMoreButtonsOnEachColumn = true;
+    settings.Views.DayView.TimeMarkerVisibility = TimeMarkerVisibility.Always;
+
+    settings.Views.WorkWeekView.DayCount = 5;
+    settings.Views.WorkWeekView.DisplayName = "Citas";
+    settings.Views.WorkWeekView.MenuCaption = "Citas1";
+    settings.Views.WorkWeekView.ShowMoreButtons = true;
+    settings.Views.WorkWeekView.ShowDayHeaders = true;
+    settings.Views.WorkWeekView.ShowMoreButtonsOnEachColumn = true;
+    settings.Views.WorkWeekView.TimeMarkerVisibility = TimeMarkerVisibility.Always;
+
+    settings.Views.FullWeekView.AppointmentDisplayOptions.TimeDisplayType = AppointmentTimeDisplayType.Clock;
+    settings.Views.FullWeekView.AppointmentDisplayOptions.ShowShadows = true;
+    settings.Views.FullWeekView.AppointmentDisplayOptions.AppointmentAutoHeight = true;
+    settings.Views.FullWeekView.AppointmentDisplayOptions.AppointmentHeight = 10;
+    settings.Views.FullWeekView.DayCount = 7;
+    settings.Views.FullWeekView.DisplayName = "Citas";
+    settings.Views.FullWeekView.MenuCaption = "Citas1";
+    settings.Views.FullWeekView.ShowMoreButtons = true;
+    settings.Views.FullWeekView.ShowDayHeaders = true;
+    settings.Views.FullWeekView.ShowMoreButtonsOnEachColumn = true;
+    settings.Views.FullWeekView.TimeMarkerVisibility = TimeMarkerVisibility.Always;
+    
+}).Bind(Model.Appointments).GetHtml()
+
+
+MODEL.
+
+using System;
+
+namespace DXWebApplication1.Models
+{
+    public class Appointment
+    {
+        public int UniqueID { get; set; }
+        public DateTime StartDate { get; set;}
+        public DateTime EndDate { get; set;}
+        public string Subject { get; set;}
+        public string Description { get; set;}
+
+        public Appointment(int id, DateTime dtS, DateTime dtE, string sub, string des)
+        {
+            this.UniqueID = id;
+            this.StartDate = dtS;
+            this.EndDate = dtE;
+            this.Subject = sub;
+            this.Description = des;
+        }
+    }
+}

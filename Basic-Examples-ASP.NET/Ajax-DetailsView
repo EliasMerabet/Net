@@ -1,0 +1,51 @@
+ASP.
+<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="_Default" %>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+</head>
+<body>
+    <form id="form1" runat="server">
+    <div>
+    
+        <asp:UpdatePanel ID="UpdatePanel1" runat="server">
+            <ContentTemplate>
+                <asp:GridView ID="GridView1" runat="server" AllowPaging="True" AutoGenerateColumns="False" DataKeyNames="DEPT_NO" DataSourceID="SqlDataSource1">
+                    <Columns>
+                        <asp:CommandField ShowSelectButton="True" />
+                        <asp:BoundField DataField="DEPT_NO" HeaderText="DEPT_NO" SortExpression="DEPT_NO" />
+                        <asp:BoundField DataField="DNOMBRE" HeaderText="DNOMBRE" ReadOnly="True" SortExpression="DNOMBRE" />
+                        <asp:BoundField DataField="LOC" HeaderText="LOC" SortExpression="LOC" />
+                    </Columns>
+                </asp:GridView>
+                <asp:DetailsView ID="DetailsView1" runat="server" AllowPaging="True" AutoGenerateRows="False" DataKeyNames="DEPT_NO" DataSourceID="SqlDataSource2" Height="50px" Width="125px">
+                    <Fields>
+                        <asp:BoundField DataField="EMP_NO" HeaderText="EMP_NO" SortExpression="EMP_NO" />
+                        <asp:BoundField DataField="APELLIDO" HeaderText="APELLIDO" ReadOnly="True" SortExpression="APELLIDO" />
+                        <asp:BoundField DataField="OFICIO" HeaderText="OFICIO" SortExpression="OFICIO" />
+                        <asp:BoundField DataField="DIR" HeaderText="DIR" SortExpression="DIR" />
+                        <asp:BoundField DataField="FECHA_ALT" HeaderText="FECHA_ALT" SortExpression="FECHA_ALT" />
+                        <asp:BoundField DataField="SALARIO" HeaderText="SALARIO" SortExpression="SALARIO" />
+                        <asp:BoundField DataField="COMISION" HeaderText="COMISION" SortExpression="COMISION" />
+                        <asp:BoundField DataField="DEPT_NO" HeaderText="DEPT_NO" SortExpression="DEPT_NO" />
+                    </Fields>
+                </asp:DetailsView>
+                <asp:ScriptManager ID="ScriptManager1" runat="server">
+                </asp:ScriptManager>
+                <asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="<%$ ConnectionStrings:HospitalConnectionString %>" SelectCommand="SELECT * FROM [DEPT]"></asp:SqlDataSource>
+                <asp:SqlDataSource ID="SqlDataSource2" runat="server" ConnectionString="<%$ ConnectionStrings:HospitalConnectionString %>" SelectCommand="select * from emp where dept_no = @dept_no">
+                    <SelectParameters>
+                        <asp:ControlParameter ControlID="GridView1" Name="dept_no" PropertyName="SelectedValue" />
+                    </SelectParameters>
+                </asp:SqlDataSource>
+            </ContentTemplate>
+        </asp:UpdatePanel>
+    
+    </div>
+    </form>
+</body>
+</html>

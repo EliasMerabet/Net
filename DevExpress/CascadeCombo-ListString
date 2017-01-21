@@ -1,0 +1,140 @@
+INDEX
+
+<script type="text/javascript">
+    function COMBO1sCombo_SelectedIndexChanged(s, e) {
+        combo2.PerformCallback();
+    }
+    function COMBO2sCombo_BeginCallback(s, e) {
+        e.customArgs['combo1'] = GridView.GetEditor('combo1').GetValue();
+    }
+</script>
+
+  <div class="col-lg-12 col-md-12 col-xs-12">@Html.Partial("GridViewPartial", Model)</div>
+
+ENUM.
+
+public static List<object> GridView_combo2(object p)
+        {
+            List<object> res = new List<object>();
+            string op = Convert.ToString(p);
+            if (op == "SEC")
+            {
+                res.Add("opcion0");
+                res.Add("opcion0");
+            }
+            else if (op == "opcion1")
+            {
+                res.Add("opcion1");
+                res.Add("opcion11");
+            }
+            else
+            {
+                res.Add("default1");
+                res.Add("default11");
+            }
+            return res;
+            
+  GRIDVIEWPARTIAL.
+  
+  @{ var GridView = Html.DevExpress().GridView(
+    settings =>
+    {
+        settings.Name = "GridView";
+
+        settings.CallbackRouteValues = new { Controller = "C", Action = "GridViewPartial" };
+        settings.Width = Unit.Percentage(100);
+
+        settings.SettingsEditing.AddNewRowRouteValues = new { Controller = "C", Action = "ADD" };
+        settings.SettingsEditing.UpdateRowRouteValues = new { Controller = "C", Action = "UPDATE" };
+        settings.SettingsEditing.DeleteRowRouteValues = new { Controller = "C", Action = "DELETE" };
+
+
+        settings.SettingsPager.Visible = true;
+        settings.SettingsPager.PageSize = 10;
+        settings.Settings.ShowFilterRow = true;
+        settings.ControlStyle.Border.BorderStyle = BorderStyle.None;
+
+        settings.KeyFieldName = "Id";
+
+        settings.Columns.Add(column1 =>
+        {
+            column1.FieldName = "combo1";
+            column1.Caption = "combo1";
+
+            column1.ColumnType = MVCxGridViewColumnType.ComboBox;
+            ComboBoxProperties propertiesComboBox = column1.PropertiesEdit as ComboBoxProperties;
+            propertiesComboBox.DataSource = Enum1();
+            propertiesComboBox.ValueType = typeof(string);
+
+            propertiesComboBox.EnableSynchronization = DefaultBoolean.False;
+            propertiesComboBox.IncrementalFilteringMode = IncrementalFilteringMode.StartsWith;
+
+            propertiesComboBox.ClientSideEvents.SelectedIndexChanged = "COMBO1sCombo_SelectedIndexChanged";
+        });
+
+        settings.Columns.Add(column2 =>
+        {
+            column2.FieldName = "combo2";
+            column2.Caption = "combo2";
+
+            /*Display Mode*/
+            column2.ColumnType = MVCxGridViewColumnType.ComboBox;
+            ComboBoxProperties propertiesComboBox = column2.PropertiesEdit as ComboBoxProperties;
+            propertiesComboBox.DataSource = Enum(ViewData["combo2"]);
+            propertiesComboBox.ValueType = typeof(string);
+            /*Display Mode*/
+
+            /*Edit Mode*/
+            columnSAT.SetEditItemTemplateContent(c =>
+            {
+                var combo1 = c.Grid.GetRowValues(c.Grid.EditingRowVisibleIndex, "combo1");
+
+                var combo2 = c.Grid.GetRowValues(c.Grid.EditingRowVisibleIndex, c.Column.FieldName);
+                ViewData["combo2"] = combo1;
+
+                var Combo2s = Enum(ViewData["combo2"]);
+
+                Html.RenderPartial("ComboBoxPartial", Combo2s);
+            });
+            /*Edit Mode*/
+
+        });
+
+    });
+
+   if (ViewData["EditError"] != null)
+   {
+       PrincipalExposuresGV.SetEditErrorText((string)ViewData["EditError"]);
+   }
+    
+    }
+
+@GridView.Bind(Model).GetHtml()
+
+COMBOPARTIAL.
+
+@model List<Object>
+
+@Html.DevExpress().ComboBox(settings =>
+{
+    settings.CallbackRouteValues = new { Controller = "C", Action = "ComboBoxPartial" };
+    settings.Name = "SAT";
+
+    settings.Properties.EnableSynchronization = DefaultBoolean.False;
+    settings.Properties.IncrementalFilteringMode = IncrementalFilteringMode.StartsWith;
+    
+    settings.Properties.ValueType = typeof(string);
+
+    settings.Properties.ClientSideEvents.BeginCallback = "combo2sCombo_BeginCallback";
+    
+}).BindList(Model).GetHtml()
+
+CONTROLLER.
+
+public ActionResult ComboBoxPartial()
+        {
+            string op = (Request.Params["combo1"] != null) ? Request.Params["combo1"] : "option_default";
+            List<Object> res = Enum(op);
+            return PartialView("ComboBoxPartial", res);
+        }
+

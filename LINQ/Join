@@ -1,0 +1,14 @@
+        private void button1_Click(object sender, EventArgs e)
+        {
+
+            int ne = int.Parse(textBox1.Text);
+
+            var dato = from emp in contexto.EMP
+                       join d in contexto.DEPT
+                       on emp.DEPT_NO equals d.DEPT_NO
+                       where emp.EMP_NO == ne
+                       select new { emp.APELLIDO, d.DNOMBRE, d.LOC };
+
+            dataGridView1.DataSource = dato;
+
+        }

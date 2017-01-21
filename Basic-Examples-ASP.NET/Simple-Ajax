@@ -1,0 +1,53 @@
+ASP.
+<%@ Page Language="C#" AutoEventWireup="true" CodeFile="Default.aspx.cs" Inherits="_Default" %>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+</head>
+<body>
+    <form id="form1" runat="server">
+    <div>
+    
+        <asp:ScriptManager ID="ScriptManager1" runat="server">
+        </asp:ScriptManager>
+        <asp:UpdatePanel ID="UpdatePanel1" runat="server">
+            <ContentTemplate>
+                <asp:DropDownList ID="DropDownList1" runat="server" AutoPostBack="True" OnSelectedIndexChanged="DropDownList1_SelectedIndexChanged">
+                    <asp:ListItem Value="53425566L">Alex</asp:ListItem>
+                    <asp:ListItem Value="56985333P">Paco</asp:ListItem>
+                    <asp:ListItem Value="53256987L">Rosa</asp:ListItem>
+                    <asp:ListItem Value="54123665D">Jose</asp:ListItem>
+                </asp:DropDownList>
+                <asp:Label ID="Label1" runat="server" Text="Label"></asp:Label>
+            </ContentTemplate>
+        </asp:UpdatePanel>
+    
+    </div>
+    </form>
+</body>
+</html>
+
+CLASS.
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+public partial class _Default : System.Web.UI.Page
+{
+    protected void Page_Load(object sender, EventArgs e)
+    {
+
+    }
+
+    protected void DropDownList1_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        this.Label1.Text = this.DropDownList1.SelectedValue;
+    }
+}

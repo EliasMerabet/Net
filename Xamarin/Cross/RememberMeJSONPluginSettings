@@ -1,0 +1,31 @@
+        public void OnLogginClicked(object sender, EventArgs args)
+        {
+            if ((user.Text == "a") && (pass.Text == "1"))
+            {
+                Settings.GeneralSettings = user.Text;
+                if (remeberme.IsToggled)
+                {
+                    Dictionary<string, string> rememberme = new Dictionary<string, string>();
+                    if ((rememberme != null) && (rememberme.ContainsKey("remember")))
+                    {
+                        rememberme = JsonConvert.DeserializeObject<Dictionary<string, string>>(Settings.DictionarySettings);
+                        rememberme[user.Text] = pass.Text;
+                    }
+                    else
+                    {
+                        rememberme.Add(user.Text, pass.Text);
+                    }
+                    Settings.DictionarySettings = JsonConvert.SerializeObject(rememberme, Formatting.Indented);
+                }
+                App.Current.MainPage.Navigation.PushModalAsync(new Intervection());
+            }
+          }
+          
+       public void OnRemeberme(object sender, TextChangedEventArgs e)
+        {
+            Dictionary<string, string> rememberme = JsonConvert.DeserializeObject<Dictionary<string, string>>(Settings.DictionarySettings);
+                if ((rememberme != null) && (rememberme.ContainsKey(e.NewTextValue)))
+                {
+                    pass.Text = rememberme[e.NewTextValue];
+                }
+        }

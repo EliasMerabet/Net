@@ -1,0 +1,51 @@
+        public ActionResult EmpleadosSession(int? empno)
+        {
+            ModeloDatos modelo = new ModeloDatos();
+            if (empno != null)
+            {
+                //HEMOS RECIBIDO UN EMPLEADO
+                //PARA ALMACENAR
+                List<int> listaempleados;
+                if (Session["EMPLEADOS"] == null)
+                {
+                    //TODAVIA NO HAY EMPLEADOS ALMACENADOS
+                    //CREAMOS LA COLECCION
+                    listaempleados = new List<int>();
+                }
+                else
+                {
+                    //YA HEMOS ALMACENADO PREVIAMENTE
+                    //EN LA COLECCION Y RECUPERAMOS LOS DATOS
+                    listaempleados = (List<int>)Session["EMPLEADOS"];
+                }
+                listaempleados.Add(empno.Value);
+                Session["EMPLEADOS"] = listaempleados;
+                ViewBag.Elementos = "Número de empleados almacenados: "
+                    + listaempleados.Count().ToString();
+            }
+
+            //MOSTRAMOS TODOS LOS EMPLEADOS
+            IQueryable<EMP> empleados = modelo.GetEmpleados();
+            return View(empleados);
+        }
+
+        public ActionResult EmpleadosResumenSession()
+        {
+            if (Session["EMPLEADOS"] == null)
+            {
+                ViewBag.Mensaje = "No hay empleados almacenados";
+            }
+            else
+            {
+                List<int> lista = (List<int>)Session["EMPLEADOS"];
+                ModeloDatos modelo = new ModeloDatos();
+                IQueryable<EMP> seleccionados =
+                    modelo.GetEmpleadosAlmacenados(lista);
+                int? suma = seleccionados.Sum(z => z.SALARIO);
+                ViewBag.SumaSalarial = suma;
+                return View(seleccionados);
+            }
+            return View();
+
+
+        }

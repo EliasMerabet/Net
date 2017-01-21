@@ -1,0 +1,178 @@
+INDEX.
+
+@model System.Collections.IEnumerable
+
+@Html.Partial("_GridViewPartial", Model)
+
+</br></br></br></br>
+
+@Html.ActionLink("Test", "Test", "Home")
+
+</br></br></br></br>
+
+TOPMENU.XML
+
+<?xml version="1.0" encoding="utf-8" ?>
+<items>
+  <item Text="Test" NavigateUrl="~/Home/Test />
+  <item Text="Test1" NavigateUrl="~/Home/Test"  />
+  <item Text="Test2" NavigateUrl="~/Home/Test"  />
+  <item Text="Test3" NavigateUrl="~/Home/Test"  />
+</items>
+
+CONTROLLER.
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using DemoDevExpressLayout.Models;
+using DevExpress.Web.Mvc;
+
+namespace DemoDevExpressLayout.Controllers
+{
+    public class HomeController : Controller
+    {
+        private static int numOrders = 500;
+        public static List<Order> lo = new List<Order>();
+        public ActionResult Index()
+        {
+            lo = getOrders();
+            return View(getOrders());
+        }
+
+        public ActionResult Test()
+        {
+            return View();
+        }
+
+        private List<Order> getOrders()
+        {
+            List<Order> lo = new List<Order>();
+
+            for (int i = 0; i < numOrders; i++)
+            {
+                Order o = new Order();
+                o.OrderID = 1000 + i;
+                o.Quantity = 10 + i;
+                o.Price = 10.1f + i;
+                o.Discount = 0.2f + i;
+                o.NameProduct = "Name of Product " + i;
+                o.Description = "Description of Product " + i;
+                o.Total = (o.Quantity * o.Price) - (o.Discount * o.Quantity);
+
+                lo.Add(o);
+            }
+            return lo;
+        }
+
+
+        [ValidateInput(false)]
+        public ActionResult GridViewPartial()
+        {
+            return PartialView("_GridViewPartial", lo);
+        }
+
+        [HttpPost, ValidateInput(false)]
+        public ActionResult GridViewPartialAddNew(DemoDevExpressLayout.Models.Order item)
+        {
+            var model = new object[0];
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    // Insert here a code to insert the new item in your model
+                }
+                catch (Exception e)
+                {
+                    ViewData["EditError"] = e.Message;
+                }
+            }
+            else
+                ViewData["EditError"] = "Please, correct all errors.";
+            return PartialView("_GridViewPartial", model);
+        }
+        [HttpPost, ValidateInput(false)]
+        public ActionResult GridViewPartialUpdate(DemoDevExpressLayout.Models.Order item)
+        {
+            var model = new object[0];
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    // Insert here a code to update the item in your model
+                }
+                catch (Exception e)
+                {
+                    ViewData["EditError"] = e.Message;
+                }
+            }
+            else
+                ViewData["EditError"] = "Please, correct all errors.";
+            return PartialView("_GridViewPartial", model);
+        }
+        [HttpPost, ValidateInput(false)]
+        public ActionResult GridViewPartialDelete(System.Int32 OrderID)
+        {
+            if (OrderID >= 0)
+            {
+                try
+                {
+                    lo = (from o in lo
+                                  where o.OrderID != OrderID
+                                  select o).ToList();
+                }
+                catch (Exception e)
+                {
+                    ViewData["EditError"] = e.Message;
+                }
+            }
+            return PartialView("_GridViewPartial", lo);
+        }
+    }
+
+}
+
+public enum HeaderViewRenderMode { Full, Title }
+
+GRIDVIEWPARTIAL.
+
+@{
+	var grid = Html.DevExpress().GridView(settings => {
+        settings.Name = "GridView";
+        settings.CallbackRouteValues = new { Controller = "Home", Action = "GridViewPartial" };
+
+		settings.SettingsEditing.AddNewRowRouteValues = new { Controller = "Home", Action = "GridViewPartialAddNew" };
+        settings.SettingsEditing.UpdateRowRouteValues = new { Controller = "Home", Action = "GridViewPartialUpdate" };
+        settings.SettingsEditing.DeleteRowRouteValues = new { Controller = "Home", Action = "GridViewPartialDelete" };
+        settings.SettingsEditing.Mode = GridViewEditingMode.EditFormAndDisplayRow;
+        settings.SettingsBehavior.ConfirmDelete = true;
+
+		settings.CommandColumn.Visible = true;
+        settings.CommandColumn.ShowNewButton = true;
+        settings.CommandColumn.ShowDeleteButton = true;
+        settings.CommandColumn.ShowEditButton = true;
+
+		settings.KeyFieldName = "OrderID";
+
+		settings.SettingsPager.Visible = true;
+		settings.Settings.ShowGroupPanel = true;
+		settings.Settings.ShowFilterRow = true;
+		settings.SettingsBehavior.AllowSelectByRowClick = true;
+
+				settings.Columns.Add("OrderID").ReadOnly = True;
+				settings.Columns.Add("Quantity");
+				settings.Columns.Add("NameProduct");
+				settings.Columns.Add("Description");
+				settings.Columns.Add("Price");
+				settings.Columns.Add("Discount");
+				settings.Columns.Add("Total");
+			});
+		if (ViewData["EditError"] != null){
+        grid.SetEditErrorText((string)ViewData["EditError"]);
+    }
+}
+@grid.Bind(Model).GetHtml()
+
+_LAYOUT (BUILDED BY WIZARD).

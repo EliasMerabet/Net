@@ -1,0 +1,104 @@
+VIEW.
+@{
+    ViewBag.Title = "ListaEmpleados";
+}
+
+@model List<EmpCombo.Models.EMP>
+
+<h2>ListaEmpleados</h2>
+
+
+<form name="form1" method="post">
+    Oficio: <select name="cbxOficios" onchange="form1.submit()">
+        @foreach (String e in @ViewBag.Oficios)
+        {
+            if (@ViewBag.Seleccion != null && @ViewBag.Seleccion == @e)
+            {
+                <option value="@e" selected="selected">@e</option>
+            }
+            else
+            {
+                <option value="@e">@e</option>
+            }
+
+        }
+    </select>
+</form>
+
+@if (Model != null)
+{
+    <table border="1">
+        <tr>
+            <th>Apellido</th>
+            <th>Oficio</th>
+            <th>Salario</th>
+            <th>Comision</th>
+        </tr>
+        @foreach (EmpCombo.Models.EMP e in Model)
+        {
+            <tr>
+                <td>@e.APELLIDO</td>
+                <td>@e.OFICIO</td>
+                <td>@e.SALARIO</td>
+                <td>@e.COMISION</td>
+            </tr>
+        }
+    </table>
+}
+
+MODEL.
+
+        HospitalDataContext contexto = new HospitalDataContext();
+
+        public List<String> GetOficios()
+        {
+            List<String> oficios = new List<String>();
+            var consulta = (from datos in contexto.EMP
+                            select datos.OFICIO).Distinct();
+
+            foreach (var ofi in consulta)
+            {
+                oficios.Add(ofi);
+            }
+
+            return oficios;
+        }
+
+        public List<Models.EMP> GetEmpleados(String oficio)
+        {
+            List<Models.EMP> lista = new List<EMP>();
+            var consulta = from datos in contexto.EMP
+                           where datos.OFICIO == oficio
+                           select datos;
+            foreach (EMP emp in consulta)
+            {
+                lista.Add(emp);
+            }
+
+            return lista;
+
+
+        }
+        
+CONTROLLER.
+
+        public ActionResult ListaEmpleados()
+        {
+            Models.Empleado emp = new Models.Empleado();
+            List<String> oficios = emp.GetOficios();
+            ViewBag.Oficios = oficios;
+
+            return View();
+        }
+
+        //POST
+        [HttpPost]
+        public ActionResult ListaEmpleados(String cbxOficios)
+        {
+            Models.Empleado emp = new Models.Empleado();
+            List<String> oficios = emp.GetOficios();
+            ViewBag.Oficios = oficios;
+            ViewBag.Seleccion = cbxOficios;
+            List<Models.EMP> lista = emp.GetEmpleados(cbxOficios);
+            return View(lista);
+        }

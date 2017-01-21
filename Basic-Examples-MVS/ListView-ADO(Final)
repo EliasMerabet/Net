@@ -1,0 +1,96 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+using System.Data.SqlClient;
+
+namespace Resumen
+{
+    public partial class Form1 : Form
+    {
+
+        static string cadena = "Data Source=.;Initial Catalog=Hospital;Integrated Security=True";
+        SqlDataAdapter AdHosp = new SqlDataAdapter("Select * from Hospital", cadena);
+        SqlDataAdapter AdDoctor = new SqlDataAdapter("Select * from Doctor", cadena);
+        SqlDataAdapter AdPlant = new SqlDataAdapter("Select * from Plantilla", cadena);
+        DataSet Ds = new DataSet();
+        int i, z;
+        DataTable TablaDoctor = new DataTable();
+        DataTable TablaPlantilla = new DataTable();
+
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            this.listView1.View = View.Details;
+            this.listView1.FullRowSelect = true;
+            this.listView1.GridLines = true;
+            AdHosp.Fill(Ds, "Hospital");
+            AdDoctor.Fill(Ds, "Doctor");
+            AdPlant.Fill(Ds, "Plantilla");
+
+            for (i = 0; i <= Ds.Tables["Hospital"].Columns.Count - 1; i++)
+            {
+                this.listView1.Columns.Add(Ds.Tables[0].Columns[i].ColumnName, 110, HorizontalAlignment.Center);
+            }
+
+            for (i = 0; i <= Ds.Tables["Hospital"].Rows.Count - 1; i++)
+            {
+                ListViewItem It = new ListViewItem();
+                It.Text = Ds.Tables[0].Rows[i][0].ToString();
+
+                for (z = 1; z <= Ds.Tables[0].Rows[i].ItemArray.GetUpperBound(0); z++)
+                {
+                    It.SubItems.Add(Ds.Tables[0].Rows[i][z].ToString());
+                }
+
+                this.listView1.Items.Add(It);
+            }
+
+            this.listView1.Sorting = System.Windows.Forms.SortOrder.Descending;
+            Ds.Tables["Hospital"].PrimaryKey = new DataColumn[] { Ds.Tables["Hospital"].Columns["Hospital_Cod"] };
+            Ds.Relations.Add("Hospital_Doctor", Ds.Tables["Hospital"].Columns["Hospital_Cod"], Ds.Tables["Doctor"].Columns["Hospital_Cod"]);
+            Ds.Relations.Add("Hospital_Plantilla", Ds.Tables["Hospital"].Columns["Hospital_Cod"], Ds.Tables["Plantilla"].Columns["Hospital_Cod"]);
+            TablaDoctor = Ds.Tables["Doctor"].Clone();
+            TablaPlantilla = Ds.Tables["Plantilla"].Clone();
+            this.dataGridView1.ReadOnly = true;
+            this.dataGridView2.ReadOnly = true;
+            this.dataGridView2.DataSource = TablaPlantilla;
+            this.dataGridView1.DataSource = TablaDoctor;
+
+        }
+
+        private void listView1_Click(object sender, EventArgs e)
+        {
+            int ClaveHospital;
+            DataRow Fila;
+            DataRow[] RegistrosDoctor;
+            DataRow[] RegistrosPlantilla;
+
+            ClaveHospital = int.Parse(this.listView1.FocusedItem.Text);
+            Fila = Ds.Tables["Hospital"].Rows.Find(ClaveHospital);
+            RegistrosDoctor = Fila.GetChildRows("Hospital_Doctor");
+            RegistrosPlantilla = Fila.GetChildRows("Hospital_Plantilla");
+
+            TablaDoctor.Clear();
+            TablaPlantilla.Clear();
+            for (i = 0; i <= RegistrosDoctor.GetUpperBound(0); i++)
+            {
+                TablaDoctor.Rows.Add(RegistrosDoctor[i].ItemArray);
+            }
+
+            for (i = 0; i <= RegistrosPlantilla.GetUpperBound(0); i++)
+            {
+                TablaPlantilla.Rows.Add(RegistrosPlantilla[i].ItemArray);
+            }
+
+        }
+    }
+}

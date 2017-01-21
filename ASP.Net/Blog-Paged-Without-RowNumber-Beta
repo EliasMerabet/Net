@@ -1,0 +1,529 @@
+ int page;
+    int not = 1;
+    int com = 0;
+    int numberRecords;
+    //string cadena = "server=127.0.0.1; Port=3306; User Id=root;password=sa12345;database=psicologa";
+    string cadena = "server=mysql04.servidoresdedicados.com;User Id=Patricia;password=Psicologia123;database=Psicologa";
+    MySqlConnection Cn;
+    MySqlDataReader Datos;
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        page = Int32.Parse(Request["page"]);
+        numberRecords = GetRecords();
+
+        /*if (page * 5 + 5 > numberRecords)
+        {
+            pintarCompleta(0, 0, numberRecords - 4);
+            pintarParcial(0, numberRecords - 4);
+        } else
+        {
+            pintarCompleta(0, 0, page * 5 + 1);
+            pintarParcial(0, page * 5 + 1);
+        }*/
+
+        pintarCompleta(0, 0, page);
+        pintarParcial(0, page);
+
+        if (numberRecords/5 > 0)
+        {
+            int j = 0;
+            for (int i = 1; i < numberRecords; i += 5)
+            {
+                pager.InnerHtml += "<a href='BlogWeb.aspx?page=" + j + "'><button type='button' class='btn btn-info' style='margin: 0 0 0 20px;'>" + (j + 1) + "</button></a>";
+                j++;
+            }
+        }
+
+    }
+    private void GetRecordsPerPage(string comand)
+    {
+        try
+        {
+            Cn = new MySqlConnection(cadena);
+            Cn.Open();
+            MySqlCommand Com = new MySqlCommand(comand, Cn);
+            Datos = Com.ExecuteReader();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+    }
+    private int GetRecords()
+    {
+        Connect("SELECT COUNT(1) FROM Blog");
+        int numberRecords = 0;
+        if (Datos.HasRows == true)
+        {
+            Datos.Read();
+            numberRecords = Datos.GetInt32(0);
+            Close();
+        }
+        return numberRecords;
+    }
+
+    private void Connect(string comando)
+    {
+        try
+        {
+            Cn = new MySqlConnection(cadena);
+            Cn.Open();
+            MySqlCommand Com = new MySqlCommand(comando, Cn);
+            Datos = Com.ExecuteReader();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+    }
+
+    private void Close()
+    {
+        try
+        {
+            Cn.Close();
+            Datos.Close();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+    }
+
+    private void load(int not, int com, int page)
+    {
+        pintarCompleta(not, com, page);
+        pintarParcial(not, page);
+    }
+
+    private void pintarParcial(int not, int page)
+    {
+        GetRecordsPerPage("SELECT * FROM Blog WHERE codigo > " + (numberRecords - ((page * 5) + 5)) + " AND codigo <= " + (numberRecords - (page * 5)));
+
+        if (Datos.HasRows == true)
+        {
+            Datos.Read();
+
+            if (not != 1)
+            {
+                p5.Attributes["class"] = "pCollapse";
+                titulo5.InnerHtml = Datos.GetString(1);
+                texto5.InnerHtml = Datos.GetString(2);
+                fecha5.InnerHtml = Datos.GetDateTime(5).ToShortDateString();
+                enlace5.InnerHtml = Datos.GetString(4);
+                enlace5.HRef = Datos.GetString(4);
+                AComentario5.Visible = false;
+                leerMas5.Visible = true;
+                masComentarios5.Visible = false;
+                menosComentarios5.Visible = false;
+            }
+
+            Datos.Read();
+
+            if (not != 2)
+            {
+                p4.Attributes["class"] = "pCollapse";
+                titulo4.InnerHtml = Datos.GetString(1);
+                texto4.InnerHtml = Datos.GetString(2);
+                fecha4.InnerHtml = Datos.GetDateTime(5).ToShortDateString();
+                enlace4.InnerHtml = Datos.GetString(4);
+                enlace4.HRef = Datos.GetString(4);
+                AComentario4.Visible = false;
+                leerMas4.Visible = true;
+                masComentarios4.Visible = false;
+                menosComentarios4.Visible = false;
+            }
+
+            Datos.Read();
+
+            if (not != 3)
+            {
+                p3.Attributes["class"] = "pCollapse";
+                titulo3.InnerHtml = Datos.GetString(1);
+                texto3.InnerHtml = Datos.GetString(2);
+                fecha3.InnerHtml = Datos.GetDateTime(5).ToShortDateString();
+                enlace3.InnerHtml = Datos.GetString(4);
+                enlace3.HRef = Datos.GetString(4);
+                AComentario3.Visible = false;
+                leerMas3.Visible = true;
+                masComentarios3.Visible = false;
+                menosComentarios3.Visible = false;
+            }
+
+            Datos.Read();
+
+            if (not != 4)
+            {
+                p2.Attributes["class"] = "pCollapse";
+                titulo2.InnerHtml = Datos.GetString(1);
+                texto2.InnerHtml = Datos.GetString(2);
+                fecha2.InnerHtml = Datos.GetDateTime(5).ToShortDateString();
+                enlace2.InnerHtml = Datos.GetString(4);
+                enlace2.HRef = Datos.GetString(4);
+                AComentario2.Visible = false;
+                leerMas2.Visible = true;
+                masComentarios2.Visible = false;
+                menosComentarios2.Visible = false;
+            }
+
+            Datos.Read();
+
+            if (not != 5)
+            {
+                p1.Attributes["class"] = "pCollapse";
+                titulo1.InnerHtml = Datos.GetString(1);
+                texto1.InnerHtml = Datos.GetString(2);
+                fecha1.InnerHtml = Datos.GetDateTime(5).ToShortDateString();
+                enlace1.InnerHtml = Datos.GetString(4);
+                enlace1.HRef = Datos.GetString(4);
+                AComentario1.Visible = false;
+                leerMas1.Visible = true;
+                masComentarios1.Visible = false;
+                menosComentarios1.Visible = false;
+            }
+            Close();
+        }
+    }
+
+    private void pintarCompleta(int not, int com, int page)
+    {
+        GetRecordsPerPage("SELECT * FROM Blog WHERE codigo > " + (numberRecords - ((page * 5) + 5)) + " AND codigo <= " + (numberRecords - (page * 5)));
+
+        if (Datos.HasRows == true)
+        {
+            Datos.Read();
+
+            if (not == 1)
+            {
+                p5.Attributes["class"] = "pShow";
+                titulo5.InnerHtml = Datos.GetString(1).ToUpper();
+                if (Datos.GetString(5) == null)
+                {
+                    texto5.InnerHtml = Datos.GetString(2);
+                }
+                else
+                {
+                    texto5.InnerHtml = "<img alt='Blog Psicologia' style='float:right;height:50%;width:30%;border:2px inset black;margin:0px 20px 20px 20px;' src='" + Datos.GetString(5) + "'/>" + Datos.GetString(2);
+                }
+                
+                enlace5.InnerHtml = Datos.GetString(4);
+                enlace5.HRef = Datos.GetString(4);
+                fecha5.InnerHtml = Datos.GetDateTime(5).ToShortDateString();
+                AComentario5.Visible = true;
+                leerMas5.Visible = false;
+
+                string resultcomentario1 = "";
+                string color = "aliceblue;";
+                string[] comentarios = Datos.GetString(3).Split('|');
+                if (comentarios.Length > 1)
+                {
+                    if ((comentarios.Length > 2) && (com == 0))
+                    {
+                        masComentarios5.Visible = true;
+                        menosComentarios5.Visible = false;
+                        for (int i = comentarios.Length - 2; i < comentarios.Length; i++)
+                        {
+                            string[] comentario = comentarios.ElementAt(i).Split('#');
+                            if (i % 2 == 0)
+                            {
+                                color = "aliceblue;";
+                            }
+                            else
+                            {
+                                color = "white;";
+                            }
+                            resultcomentario1 += "<div style='background-color:" + color + "margin-right:200px;padding:10px 10px 10px 10px;margin-left:30px;border-radius:4px;text-align:left;'><strong style='font-size: smaller;'>" + comentario.ElementAt(0) + "</strong><br /><div style='padding:10px 10px 10px 10px;'><p style='font-size: smaller;'>" + comentario.ElementAt(1) + "</p></div></div>";
+                        }
+                    }
+                    else
+                    {
+                        for (int i = 0; i < comentarios.Length; i++)
+                        {
+                            string[] comentario = comentarios.ElementAt(i).Split('#');
+                            if (i % 2 == 0)
+                            {
+                                color = "aliceblue;";
+                            }
+                            else
+                            {
+                                color = "white;";
+                            }
+                            resultcomentario1 += "<div style='background-color:" + color + "margin-right:200px;padding:10px 10px 10px 10px;margin-left:30px;border-radius:4px;text-align:left;'><strong style='font-size: smaller;'>" + comentario.ElementAt(0) + "</strong><br /><div style='padding:10px 10px 10px 10px;'><p style='font-size: smaller;'>" + comentario.ElementAt(1) + "</p></div></div>";
+                        }
+                        masComentarios5.Visible = false;
+                        menosComentarios5.Visible = true;
+                    }
+                }
+                comentarios5.InnerHtml = resultcomentario1;
+            }
+
+            Datos.Read();
+
+            if (not == 2)
+            {
+                p4.Attributes["class"] = "pShow";
+                titulo4.InnerHtml = Datos.GetString(1).ToUpper();
+
+                if (Datos.GetString(5) == null)
+                {
+                    texto4.InnerHtml = Datos.GetString(2);
+                }
+                else
+                {
+                    texto4.InnerHtml = "<img alt='Blog Psicologia' style='float:right;height:50%;width:30%;border:2px inset black;margin:0px 20px 20px 20px;' src='" + Datos.GetString(5) + "'/>" + Datos.GetString(4);
+                }
+
+                enlace4.InnerHtml = Datos.GetString(4);
+                enlace4.HRef = Datos.GetString(4);
+                fecha4.InnerHtml = Datos.GetDateTime(5).ToShortDateString();
+                AComentario4.Visible = true;
+                leerMas4.Visible = false;
+
+                string resultcomentario2 = "";
+                string color = "aliceblue;";
+                string[] comentarios = Datos.GetString(3).Split('|');
+                if (comentarios.Length > 1)
+                {
+                    if ((comentarios.Length > 2) && (com == 0))
+                    {
+                        masComentarios4.Visible = true;
+                        menosComentarios4.Visible = false;
+                        for (int i = comentarios.Length - 2; i < comentarios.Length; i++)
+                        {
+                            string[] comentario = comentarios.ElementAt(i).Split('#');
+                            if (i % 2 == 0)
+                            {
+                                color = "aliceblue;";
+                            }
+                            else
+                            {
+                                color = "white;";
+                            }
+                            resultcomentario2 += "<div style='background-color:" + color + "margin-right:200px;padding:10px 10px 10px 10px;margin-left:30px;border-radius:4px;text-align:left;'><strong style='font-size: smaller;'>" + comentario.ElementAt(0) + "</strong><br /><div style='padding:10px 10px 10px 10px;'><p style='font-size: smaller;'>" + comentario.ElementAt(1) + "</p></div></div>";
+                        }
+                    }
+                    else
+                    {
+                        for (int i = 0; i < comentarios.Length; i++)
+                        {
+                            string[] comentario = comentarios.ElementAt(i).Split('#');
+                            if (i % 2 == 0)
+                            {
+                                color = "aliceblue;";
+                            }
+                            else
+                            {
+                                color = "white;";
+                            }
+                            resultcomentario2 += "<div style='background-color:" + color + "margin-right:200px;padding:10px 10px 10px 10px;margin-left:30px;border-radius:4px;text-align:left;'><strong style='font-size: smaller;'>" + comentario.ElementAt(0) + "</strong><br /><div style='padding:10px 10px 10px 10px;'><p style='font-size: smaller;'>" + comentario.ElementAt(1) + "</p></div></div>";
+                        }
+                        masComentarios4.Visible = false;
+                        menosComentarios4.Visible = true;
+                    }
+                }
+                comentarios4.InnerHtml = resultcomentario2 + "";
+            }
+
+            Datos.Read();
+
+            if (not == 3)
+            {
+                p3.Attributes["class"] = "pShow";
+                titulo3.InnerHtml = Datos.GetString(1).ToUpper();
+
+                if (Datos.GetString(5) == null)
+                {
+                    texto3.InnerHtml = Datos.GetString(2);
+                }
+                else
+                {
+                    texto3.InnerHtml = "<img alt='Blog Psicologia' style='float:right;height:50%;width:30%;border:2px inset black;margin:0px 20px 20px 20px;' src='" + Datos.GetString(5) + "'/>" + Datos.GetString(2);
+                }
+
+                enlace3.InnerHtml = Datos.GetString(4);
+                enlace3.HRef = Datos.GetString(4);
+                fecha3.InnerHtml = Datos.GetDateTime(5).ToShortDateString();
+                AComentario3.Visible = true;
+                leerMas3.Visible = false;
+
+                string resultcomentario3 = "";
+                string color = "aliceblue;";
+                string[] comentarios = Datos.GetString(3).Split('|');
+                if (comentarios.Length > 1)
+                {
+                    if ((comentarios.Length > 2) && (com == 0))
+                    {
+                        masComentarios3.Visible = true;
+                        menosComentarios3.Visible = false;
+                        for (int i = comentarios.Length - 2; i < comentarios.Length; i++)
+                        {
+                            string[] comentario = comentarios.ElementAt(i).Split('#');
+                            if (i % 2 == 0)
+                            {
+                                color = "aliceblue;";
+                            }
+                            else
+                            {
+                                color = "white;";
+                            }
+                            resultcomentario3 += "<div style='background-color:" + color + "margin-right:200px;padding:10px 10px 10px 10px;margin-left:30px;border-radius:4px;text-align:left;'><strong style='font-size: smaller;'>" + comentario.ElementAt(0) + "</strong><br /><div style='padding:10px 10px 10px 10px;'><p style='font-size: smaller;'>" + comentario.ElementAt(1) + "</p></div></div>";
+                        }
+                    }
+                    else
+                    {
+                        for (int i = 0; i < comentarios.Length; i++)
+                        {
+                            string[] comentario = comentarios.ElementAt(i).Split('#');
+                            if (i % 2 == 0)
+                            {
+                                color = "aliceblue;";
+                            }
+                            else
+                            {
+                                color = "white;";
+                            }
+                            resultcomentario3 += "<div style='background-color:" + color + "margin-right:200px;padding:10px 10px 10px 10px;margin-left:30px;border-radius:4px;text-align:left;'><strong style='font-size: smaller;'>" + comentario.ElementAt(0) + "</strong><br /><div style='padding:10px 10px 10px 10px;'><p style='font-size: smaller;'>" + comentario.ElementAt(1) + "</p></div></div>";
+                        }
+                        masComentarios3.Visible = false;
+                        menosComentarios3.Visible = true;
+                    }
+                }
+                comentarios3.InnerHtml = resultcomentario3;
+            }
+
+            Datos.Read();
+
+            if (not == 4)
+            {
+                p2.Attributes["class"] = "pShow";
+                titulo2.InnerHtml = Datos.GetString(1).ToUpper();
+
+                if (Datos.GetString(5) == null)
+                {
+                    texto2.InnerHtml = Datos.GetString(2);
+                }
+                else
+                {
+                    texto2.InnerHtml = "<img alt='Blog Psicologia' style='float:right;height:50%;width:30%;border:2px inset black;margin:0px 20px 20px 20px;' src='" + Datos.GetString(6) + "'/>" + Datos.GetString(3);
+                }
+
+                enlace2.InnerHtml = Datos.GetString(4);
+                enlace2.HRef = Datos.GetString(4);
+                fecha2.InnerHtml = Datos.GetDateTime(5).ToShortDateString();
+                AComentario2.Visible = true;
+                leerMas2.Visible = false;
+
+                string resultcomentario4 = "";
+                string color = "aliceblue;";
+                string[] comentarios = Datos.GetString(3).Split('|');
+                if (comentarios.Length > 1)
+                {
+                    if ((comentarios.Length > 2) && (com == 0))
+                    {
+                        masComentarios2.Visible = true;
+                        menosComentarios2.Visible = false;
+                        for (int i = comentarios.Length - 2; i < comentarios.Length; i++)
+                        {
+                            string[] comentario = comentarios.ElementAt(i).Split('#');
+                            if (i % 2 == 0)
+                            {
+                                color = "aliceblue;";
+                            }
+                            else
+                            {
+                                color = "white;";
+                            }
+                            resultcomentario4 += "<div style='background-color:" + color + "margin-right:200px;padding:10px 10px 10px 10px;margin-left:30px;border-radius:4px;text-align:left;'><strong style='font-size: smaller;'>" + comentario.ElementAt(0) + "</strong><br /><div style='padding:10px 10px 10px 10px;'><p style='font-size: smaller;'>" + comentario.ElementAt(1) + "</p></div></div>";
+                        }
+                    }
+                    else
+                    {
+                        for (int i = 0; i < comentarios.Length; i++)
+                        {
+                            string[] comentario = comentarios.ElementAt(i).Split('#');
+                            if (i % 2 == 0)
+                            {
+                                color = "aliceblue;";
+                            }
+                            else
+                            {
+                                color = "white;";
+                            }
+                            resultcomentario4 += "<div style='background-color:" + color + "margin-right:200px;padding:10px 10px 10px 10px;margin-left:30px;border-radius:4px;text-align:left;'><strong style='font-size: smaller;'>" + comentario.ElementAt(0) + "</strong><br /><div style='padding:10px 10px 10px 10px;'><p style='font-size: smaller;'>" + comentario.ElementAt(1) + "</p></div></div>";
+                        }
+                        masComentarios2.Visible = false;
+                        menosComentarios2.Visible = true;
+                    }
+                }
+                comentarios2.InnerHtml = resultcomentario4 + "";
+            }
+
+            Datos.Read();
+
+            if (not == 5)
+            {
+                p1.Attributes["class"] = "pShow";
+                titulo1.InnerHtml = Datos.GetString(1).ToUpper();
+
+                if (Datos.GetString(5) == null)
+                {
+                    texto1.InnerHtml = Datos.GetString(2);
+                }
+                else
+                {
+                    texto1.InnerHtml = "<img alt='Blog Psicologia' style='float:right;height:50%;width:30%;border:2px inset black;margin:0px 20px 20px 20px;' src='" + Datos.GetString(6) + "'/>" + Datos.GetString(3);
+                }
+
+                enlace1.InnerHtml = Datos.GetString(4);
+                enlace1.HRef = Datos.GetString(4);
+                fecha1.InnerHtml = Datos.GetDateTime(5).ToShortDateString();
+                AComentario1.Visible = true;
+                leerMas1.Visible = false;
+
+                string resultcomentario5 = "";
+                string color = "aliceblue;";
+                string[] comentarios = Datos.GetString(3).Split('|');
+                if (comentarios.Length > 1)
+                {
+                    if ((comentarios.Length > 2) && (com == 0))
+                    {
+                        masComentarios1.Visible = true;
+                        menosComentarios1.Visible = false;
+                        for (int i = comentarios.Length - 2; i < comentarios.Length; i++)
+                        {
+                            string[] comentario = comentarios.ElementAt(i).Split('#');
+                            if (i % 2 == 0)
+                            {
+                                color = "aliceblue;";
+                            }
+                            else
+                            {
+                                color = "white;";
+                            }
+                            resultcomentario5 += "<div style='background-color:" + color + "margin-right:200px;padding:10px 10px 10px 10px;margin-left:30px;border-radius:4px;text-align:left;'><strong style='font-size: smaller;'>" + comentario.ElementAt(0) + "</strong><br /><div style='padding:10px 10px 10px 10px;'><p style='font-size: smaller;'>" + comentario.ElementAt(1) + "</p></div></div>";
+                        }
+                    }
+                    else
+                    {
+                        for (int i = 0; i < comentarios.Length; i++)
+                        {
+                            string[] comentario = comentarios.ElementAt(i).Split('#');
+                            if (i % 2 == 0)
+                            {
+                                color = "aliceblue;";
+                            }
+                            else
+                            {
+                                color = "white;";
+                            }
+                            resultcomentario5 += "<div style='background-color:" + color + "margin-right:200px;padding:10px 10px 10px 10px;margin-left:30px;border-radius:4px;text-align:left;'><strong style='font-size: smaller;'>" + comentario.ElementAt(0) + "</strong><br /><div style='padding:10px 10px 10px 10px;'><p style='font-size: smaller;'>" + comentario.ElementAt(1) + "</p></div></div>";
+                        }
+                        masComentarios1.Visible = false;
+                        menosComentarios1.Visible = true;
+                    }
+                }
+                comentarios1.InnerHtml = resultcomentario5;
+            }
+            Close();
+        }
+    }

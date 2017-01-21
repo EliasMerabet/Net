@@ -1,0 +1,49 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+using System.Data.SqlClient;
+
+namespace MVS18DESCONECTADO_BusquedaInformacion
+{
+    public partial class Form2 : Form
+    {
+
+        static string cadena = "Data Source=.;Initial Catalog=Hospital;Integrated Security=True";
+        SqlDataAdapter Ad = new SqlDataAdapter("Select Apellido, Oficio, Fecha_alt from Emp", cadena);
+        DataSet Ds = new DataSet();
+        DataView Dv;
+
+        public Form2()
+        {
+            InitializeComponent();
+        }
+
+        private void Form2_Load(object sender, EventArgs e)
+        {
+            Ad.Fill(Ds, "Emp");
+            Dv = Ds.Tables["Emp"].DefaultView;
+            this.monthCalendar1.SelectionStart = new DateTime(1982, 01, 01);
+            this.monthCalendar1.TodayDate = new DateTime(1982, 01, 01);
+            this.monthCalendar1.MaxSelectionCount = 1;
+            this.monthCalendar2.SelectionStart = DateTime.Now;
+            this.monthCalendar2.TodayDate = DateTime.Now;
+            this.monthCalendar2.MaxSelectionCount = 1;     
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            DateTime FechaIni, FechaFin;
+            FechaIni = this.monthCalendar1.SelectionStart;
+            FechaFin = this.monthCalendar2.SelectionStart;
+            Dv.RowFilter = "Fecha_alt >= '" + FechaIni +
+            "' and Fecha_alt <= '" + FechaFin + "'";
+            this.dataGridView1.DataSource = Dv;
+
+        }
+    }
+}

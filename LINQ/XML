@@ -1,0 +1,32 @@
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            documento = XDocument.Load("joyeria.xml");
+            var joyerias = from datos in documento.Descendants("joyeria")
+                           select new
+                           {
+                               nombre = datos.Element("nombrejoyeria").Value,
+                               cif = datos.Attribute("cif").Value
+                           };
+
+            foreach (var nombrejoy in joyerias)
+            {
+                this.comboBox1.Items.Add(nombrejoy.nombre);
+            }
+
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string nomjoyeria = this.comboBox1.Text;
+            var filtrojoyerias = from datos in documento.Descendants("joyeria")
+                                 where datos.Element("nombrejoyeria").Value == nomjoyeria
+                                 select new
+                                 {
+                                     direcc = datos.Element("direccion").Value,
+                                     tlf = datos.Element("telf").Value
+                                 };
+
+            label3.Text = filtrojoyerias.First().direcc;
+            label4.Text = filtrojoyerias.First().tlf;
+
+        }

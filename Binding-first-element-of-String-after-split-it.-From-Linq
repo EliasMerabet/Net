@@ -1,0 +1,18 @@
+ private void CargarDatos()
+        {
+            var consultaAlquiler = from piso in contexto.pisosAlquiler
+                                select new
+                                {
+                                    foto = piso.fotos.Split(',').GetValue(0),
+                                    //new string(object.field.TakeWhile(c => c != ',').ToArray()).
+                                    zona = piso.zona,
+                                    mm = piso.mm,
+                                    descripcion = piso.descripcion,
+                                    precio = piso.precio,
+                                    codigo = "piso.aspx?foto=1&codigo=" + piso.codigo
+                                };
+
+            GridView1.DataSource = consultaAlquiler;
+            GridView1.DataBind();
+
+        }

@@ -1,0 +1,26 @@
+//DESIGN
+
+<asp:FileUpload id="Slider1" runat="server" style="margin-left:250px;" />
+<br />
+<asp:Button ID="btSlider1" runat="server" Text="Cargar Foto Slider 1" OnClick="btSlider1_Click"/>
+<br />
+<br /><asp:Label ID="lbStatus1" runat="server" ForeColor="#FF3300"></asp:Label>
+
+//CODE
+
+protected void btSlider1_Click(object sender, EventArgs e)
+    {
+        if (Slider1.HasFile)
+        {
+            try
+            {
+                string filename = Path.GetFileName(Slider1.FileName);
+                Slider1.SaveAs("E:/WorkSpaces/MVS/ProyectoPatri/images/slider/" + "bg1.jpg");
+                lbStatus1.Text = "Archivo cargado con exito";
+            }
+            catch (Exception ex)
+            {
+                lbStatus1.Text = "Error al carga el archivo. El siguiente fallo se produjo: " + ex.Message;
+            }
+        }
+    }

@@ -1,0 +1,190 @@
+PROVIDER.
+INTERFACE.
+
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Serialization;
+using System.ServiceModel;
+using System.ServiceModel.Web;
+using System.Text;
+
+namespace Proveedor
+{
+    // NOTA: puede usar el comando "Rename" del menú "Refactorizar" para cambiar el nombre de interfaz "IService1" en el código y en el archivo de configuración a la vez.
+    [ServiceContract]
+    public interface IService1
+    {
+
+        [OperationContract]
+        double ConvertirMonedaEuro(double Valor, int TipoMoneda);
+        [OperationContract]
+        double ConvertirEuroMoneda(double Valor, int TipoMoneda);
+        [OperationContract]
+        ArrayList Monedas();
+
+    }
+
+}
+
+CLASS.
+
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Serialization;
+using System.ServiceModel;
+using System.ServiceModel.Web;
+using System.Text;
+
+namespace Proveedor
+{
+    // NOTA: puede usar el comando "Rename" del menú "Refactorizar" para cambiar el nombre de clase "Service1" en el código, en svc y en el archivo de configuración.
+    // NOTE: para iniciar el Cliente de prueba WCF para probar este servicio, seleccione Service1.svc o Service1.svc.cs en el Explorador de soluciones e inicie la depuración.
+    public class Service1 : IService1
+    {
+        public double[] valores = new double[] { 1.26201, 14.4762, 75.6061, 135.861, 166.386 };
+        public double ConvertirMonedaEuro(double Valor, int TipoMoneda)
+        {
+            int Indice;
+            Indice = TipoMoneda;
+            return (Valor * valores[Indice]);
+        }
+
+        public double ConvertirEuroMoneda(double Valor, int TipoMoneda)
+        {
+            int Indice;
+            Indice = TipoMoneda;
+            return ((Valor / valores[Indice]));
+        }
+
+        public ArrayList Monedas()
+        {
+            ArrayList ListaMonedas = new ArrayList();
+            ListaMonedas.Add("Dolar");
+            ListaMonedas.Add("Peso");
+            ListaMonedas.Add("Rupias");
+            ListaMonedas.Add("Yenes");
+            ListaMonedas.Add("Pesetas");
+            return ListaMonedas;
+
+        }
+
+    }
+}
+
+WINDOWS CLIENT.
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using ClienteWindows.ServiceReference1;
+
+namespace ClienteWindows
+{
+    public partial class Form1 : Form
+    {
+        Service1Client SrvWCF = new Service1Client();
+
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            this.SrvWCF.Open();
+            for (int i = 0; i < SrvWCF.Monedas().Length; i++)
+            {
+                this.listBox1.Items.Add(SrvWCF.Monedas().GetValue(i).ToString());
+
+            }
+        }
+
+        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            this.SrvWCF.Close();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            double Resultado;
+            int Ind;
+            Ind = this.listBox1.SelectedIndex;
+            if (this.radioButton1.Checked)
+            {
+                //CONVERTIR EUROS A MONEDA
+                Resultado = SrvWCF.ConvertirMonedaEuro(double.Parse(this.textBox1.Text), int.Parse(this.listBox1.SelectedIndex.ToString()));
+            }
+            else
+            {
+                //CONVERTIR MONEDA A EUROS
+                Resultado = SrvWCF.ConvertirEuroMoneda(double.Parse(this.textBox1.Text), int.Parse(this.listBox1.SelectedIndex.ToString()));
+            }
+
+            this.listBox2.Text = "RESULTADO: \n";
+            this.listBox2.Text += "CONVERTIR " + this.listBox1.SelectedItem.ToString().ToUpper();
+            this.listBox2.Text += " a EUROS: " + Resultado;
+
+        }
+    }
+}
+
+MVC.
+CONTROLLER.
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+
+namespace WebApplication1.Controllers
+{
+    public class MonedasController : Controller
+    {
+        localhost.Service1 convertir = new localhost.Service1();
+        public ActionResult Index()
+        {
+            List<String> lista = new List<string>();
+            for (int i = 0; i < convertir.Monedas().Length; i++)
+            {
+                lista.Add(convertir.Monedas().GetValue(i).ToString());
+            }
+            return View(lista);
+        }
+
+        [HttpPost]
+        public ActionResult Index(String moneda, String conversion, String cantidad)
+        {
+
+            Double can = Double.Parse(cantidad);
+            Double result;
+            Boolean ok;
+
+            if (conversion.Equals("EM"))
+            {
+                convertir.ConvertirEuroMoneda(can, true, 1, true, out result, out ok);
+            } else
+            {
+                convertir.ConvertirMonedaEuro(can, true, 1, true, out result, out ok);
+            }
+
+            ViewBag.mensaje = "La cantidad resultante es : " + result;
+            Object[] list = (Object[])convertir.Monedas();
+            List<String> lista = new List<string>();
+            foreach (Object o in list)
+            {
+                lista.Add(o.ToString());
+            }
+            return View(lista);
+        }
+    }
+}

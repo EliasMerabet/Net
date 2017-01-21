@@ -1,0 +1,221 @@
+WEBFORM1.
+
+<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="WebForm1.aspx.cs" Inherits="PruebaInnopulseWeb.WebForm1" %>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<link rel="stylesheet" type="text/css" href="~/css/bootstrap.css" />
+    <title></title>
+</head>
+<body>
+    <div class="container" style="margin-left:400px; margin-top: 200px;box-shadow: 10px 10px 5px #888888; width: 500px;">
+        <h2 class="col-sm-offset-1 col-sm-10"><b><u>Login</u></b></h2>
+        <form id="form1" runat="server" role="form" class="form-horizontal">
+            
+            </br></br></br></br>
+            <div class="form-group">
+                <asp:Label ID="Label1" runat="server" Text="Email:" class="control-label col-sm-2" style="text-align: left;"></asp:Label>
+                <div class="col-sm-10">
+                    <asp:TextBox ID="Email" runat="server"></asp:TextBox>
+                </div>
+            </div>
+            <div class="form-group">
+                <asp:Label ID="Label2" runat="server" Text="Password:" class="control-label col-sm-2" style="text-align: left;"></asp:Label>
+                <div class="col-sm-10">
+                    <asp:TextBox ID="Pass" TextMode="password" runat="server"></asp:TextBox>
+                </div>
+                <br />
+                <br />
+                <asp:Label ID="Error" runat="server" style="color:red; margin-left: 30px;"></asp:Label>
+                <br />
+                <br />
+                <div class="form-group">
+                    <div class="col-sm-offset-3 col-sm-10">
+                        <asp:Button ID="Button1" runat="server" Text="Log In" OnClick="Button1_Click" />
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
+
+WEBFORM1.CS.
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+namespace PruebaInnopulseWeb
+{
+    public partial class WebForm1 : System.Web.UI.Page
+    {
+        PruebaInnopulseEntities1 entidad = new PruebaInnopulseEntities1();
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            
+        }
+
+        protected void Button1_Click(object sender, EventArgs e)
+        {
+            string email = Email.Text;
+            string pass = Pass.Text;
+
+            bool login_correct = entidad.Users.Any(i => (i.Email == email) && (i.Pass == pass));
+
+            if (login_correct)
+            {
+                Response.Redirect("~/WebForm2.aspx");
+            }
+            else
+            {
+                Error.Text = "Fallo en el Login";
+            }
+        }
+    }
+}
+
+WEBFORM2.
+
+<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="WebForm2.aspx.cs" Inherits="PruebaInnopulseWeb.WebForm2" %>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+</head>
+<body>
+    <div style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);">
+    <form id="form1" runat="server">
+    <div>
+    
+        <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" OnRowCancelingEdit="GridView1_RowCancelingEdit" OnRowEditing="GridView1_RowEditing" OnRowUpdating="GridView1_RowUpdating" CellPadding="10">
+            <Columns>
+                <asp:TemplateField HeaderText="Email" SortExpression="Email">
+                    <EditItemTemplate>
+                        <asp:TextBox ID="TextBox1" runat="server" Text='<%#Eval("Email") %>'></asp:TextBox>
+                    </EditItemTemplate>
+                    <ItemTemplate>
+                        <asp:Label ID="Label1" runat="server" Text='<%#Eval("Email") %>'></asp:Label>
+                    </ItemTemplate>
+                </asp:TemplateField>
+                <asp:TemplateField HeaderText="Pass" SortExpression="Pass">
+                    <EditItemTemplate>
+                        <asp:TextBox ID="TextBox2" runat="server" Text='<%#Eval("Pass") %>'></asp:TextBox>
+                    </EditItemTemplate>
+                    <ItemTemplate>
+                        <asp:Label ID="Label2" runat="server" Text='<%#Eval("Pass") %>'></asp:Label>
+                    </ItemTemplate>
+                </asp:TemplateField>
+                <asp:TemplateField HeaderText="Accion">
+                    <EditItemTemplate>
+                        <asp:LinkButton ID="LinkButton2" runat="server" CommandName="update">Actualizar</asp:LinkButton>
+                        <asp:LinkButton ID="LinkButton3" runat="server" CommandName="cancel">Cancelar</asp:LinkButton>
+                    </EditItemTemplate>
+                    <ItemTemplate>
+                        <asp:LinkButton ID="LinkButton1" runat="server" CommandName="edit">Editar</asp:LinkButton>
+                    </ItemTemplate>
+                </asp:TemplateField>
+            </Columns>
+        </asp:GridView>
+    
+    </div>
+    </form>
+    </div>
+</body>
+</html>
+
+WEBFORM2.CS.
+
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+namespace PruebaInnopulseWeb
+{
+    public partial class WebForm2 : System.Web.UI.Page
+    {
+        PruebaInnopulseEntities1 entidad = new PruebaInnopulseEntities1();
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            if (Page.IsPostBack == false)
+            {
+                cargar();
+            }
+        }
+
+
+
+        private void cargar()
+        {
+            this.GridView1.DataSource = entidad.Users.ToList();
+            this.GridView1.DataKeyNames = new string[] { "auto_pk" };
+            this.GridView1.DataBind();
+        }
+
+        protected void GridView1_RowUpdating(object sender, GridViewUpdateEventArgs e)
+        {
+            TextBox tb1 = (TextBox)this.GridView1.Rows[e.RowIndex].FindControl("TextBox1");
+            TextBox tb2 = (TextBox)this.GridView1.Rows[e.RowIndex].FindControl("TextBox2");
+            int PK = int.Parse(this.GridView1.DataKeys[e.RowIndex].Value.ToString());
+
+            var user = entidad.Users.Where(i => (i.auto_pk == PK));
+            user.First().Email = tb1.Text;
+            user.First().Pass = HashString(tb2.Text);
+            entidad.SaveChanges();
+            GridView1.EditIndex = -1;
+            cargar();
+        }
+
+        protected void GridView1_RowEditing(object sender, GridViewEditEventArgs e)
+        {
+            Label etiqueta1 = (Label)this.GridView1.Rows[e.NewEditIndex].FindControl("Label1");
+            String email;
+            email = etiqueta1.Text;
+
+            Label etiqueta2 = (Label)this.GridView1.Rows[e.NewEditIndex].FindControl("Label2");
+            String pass;
+            pass = etiqueta2.Text;
+
+            this.GridView1.EditIndex = e.NewEditIndex;
+            cargar();
+        }
+
+        protected void GridView1_RowCancelingEdit(object sender, GridViewCancelEditEventArgs e)
+        {
+            GridView1.EditIndex = -1;
+            cargar();
+        }
+
+        public static string HashString(string cleartext)
+        {
+            byte[] clearBytes = Encoding.UTF8.GetBytes(cleartext);
+            return HashBytes(clearBytes);
+        }
+
+        public static string HashBytes(byte[] clearBytes)
+        {
+            MD5 hasher = MD5.Create();
+            byte[] hashBytes = hasher.ComputeHash(clearBytes);
+            string hash = System.Convert.ToBase64String(hashBytes);
+            hasher.Clear();
+            return hash;
+        }
+
+    }
+}

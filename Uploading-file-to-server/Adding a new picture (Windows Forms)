@@ -1,0 +1,119 @@
+ MessageBox.Show("LA FOTO TIENE QUE SER EN JPG.", "FOTO EN JPG",
+MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
+
+            var AddFotoA = from piso in contexto.pisosAlquiler
+                              where piso.codigo == int.Parse(txtCodigo.Text)
+                              select piso;
+
+            var AddFotoV = from piso in contexto.pisosVenta
+                              where piso.codigo == int.Parse(txtCodigo.Text)
+                              select piso;
+
+            if (AddFotoA.Count() > 0)
+            {
+                if (openFileDialog1.ShowDialog() == DialogResult.OK)
+                {
+                    if ((openFileDialog1.OpenFile()) != null)
+                    {
+                        string[] fotos = AddFotoA.First().fotos.Split(',');
+                        string ultFoto = fotos.Last();
+                        string foto = ultFoto.Substring(0, ultFoto.Length - 4);
+                        int numFotoUlt = int.Parse(foto.Substring(foto.Length - 1));
+                        numFotoUlt++;
+
+                        //string pathCliente = "C:/backupfotos/" + openFileDialog1.FileName;
+                        string pathCliente = openFileDialog1.FileName;
+                        byte[] buffer;
+                        using (var fileStreamR = new FileStream(pathCliente, FileMode.Open, FileAccess.Read))
+                        {
+                            try
+                            {
+                                int length = (int)fileStreamR.Length;  // get file length
+                                buffer = new byte[length];            // create buffer
+                                int count;                            // actual number of bytes read
+                                int sum = 0;                          // total number of bytes read
+
+                                // read until Read method returns 0 (end of the stream has been reached)
+                                while ((count = fileStreamR.Read(buffer, sum, length - sum)) > 0)
+                                    sum += count;  // sum is a buffer offset for next reading
+                            }
+                            finally
+                            {
+                                fileStreamR.Close();
+                            }
+                        }
+
+                        //string pathServidor = "c:/fotos/" + txtCodigo + numFotoUlt + ".jpg";
+                        string pathServidor = "E:/WorkSpaces/MVS/ProyectoJoseph/img/pisos/" + txtCodigo.Text + numFotoUlt + ".jpg";
+                        using (var fileStreamW = new FileStream(pathServidor, FileMode.Create))
+                        {
+                            try
+                            {
+                                fileStreamW.Write(buffer, 0, buffer.Length);
+                            }
+                            finally
+                            {
+                                fileStreamW.Close();
+                            }
+                        }
+                        AddFotoA.First().fotos = AddFotoA.First().fotos + "," + "img/pisos/" + txtCodigo.Text + numFotoUlt + ".jpg";
+                    }
+                }
+            }
+
+            if (AddFotoV.Count() > 0)
+            {
+                if (openFileDialog1.ShowDialog() == DialogResult.OK)
+                {
+                    if ((openFileDialog1.OpenFile()) != null)
+                    {
+                        string[] fotos = AddFotoV.First().fotos.Split(',');
+                        string ultFoto = fotos.Last();
+                        string foto = ultFoto.Substring(0, ultFoto.Length - 4);
+                        int numFotoUlt = int.Parse(foto.Substring(foto.Length - 1));
+                        numFotoUlt++;
+
+                        //string pathCliente = "C:/backupfotos/" + openFileDialog1.FileName;
+                        string pathCliente = openFileDialog1.FileName;
+                        byte[] buffer;
+                        using (var fileStreamR = new FileStream(pathCliente, FileMode.Open, FileAccess.Read))
+                        {
+                            try
+                            {
+                                int length = (int)fileStreamR.Length;  // get file length
+                                buffer = new byte[length];            // create buffer
+                                int count;                            // actual number of bytes read
+                                int sum = 0;                          // total number of bytes read
+
+                                // read until Read method returns 0 (end of the stream has been reached)
+                                while ((count = fileStreamR.Read(buffer, sum, length - sum)) > 0)
+                                    sum += count;  // sum is a buffer offset for next reading
+                            }
+                            finally
+                            {
+                                fileStreamR.Close();
+                            }
+                        }
+
+                        //string pathServidor = "c:/fotos/" + txtCodigo + numFotoUlt + ".jpg";
+                        string pathServidor = "E:/WorkSpaces/MVS/ProyectoJoseph/img/pisos/" + txtCodigo.Text + numFotoUlt + ".jpg";
+                        using (var fileStreamW = new FileStream(pathServidor, FileMode.Create))
+                        {
+                            try
+                            {
+                                fileStreamW.Write(buffer, 0, buffer.Length);
+                            }
+                            finally
+                            {
+                                fileStreamW.Close();
+                            }
+                        }
+                        AddFotoV.First().fotos = AddFotoV.First().fotos + "," + "img/pisos/" + txtCodigo.Text + numFotoUlt + ".jpg";
+                    }
+                }
+            }
+
+            contexto.SubmitChanges();
+            MessageBox.Show("Foto añadida con éxito. Vuelve a la primera pantalla", "Añadir foto realizado",
+MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk);
+            this.Close();

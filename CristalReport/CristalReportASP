@@ -1,0 +1,43 @@
+CODEBEHIND
+
+static string cadena = "";
+SqlDataAdapter ad = new SqlDataAdapter("Select * from socios", cadena);
+DataSet ds = new DataSet();
+
+protected void lnkverinforme_Click(Object sender,System.EventArgs e) 
+{
+        String informe;
+        DataSet1 d = new DataSet1();
+        DataSet1.SociosDataTable t = new DataSet1.SociosDataTable();
+
+        ad.Fill(t);
+        informe = this.Server.MapPath("CrystalReport1.rpt");
+  CrystalDecisions.CrystalReports.Engine.ReportDocument objReport = new CrystalDecisions.CrystalReports.Engine.ReportDocument();
+        objReport.Load(Informe);
+        ds.Tables.Add(t);
+        objReport.SetDataSource(ds);
+        
+//GENERAR PDF EN SERVER.
+MemoryStream OStream;
+ OStream = (MemoryStream)objReport.ExportToStream(CrystalDecisions.Shared.ExportFormatType.PortableDocFormat);
+        String Ruta;
+        Ruta = this.Server.MapPath("Socias");
+        Ruta += "/Nomina_" + Emp + ".pdf";
+        FileStream Fichero =new FileStream(Ruta, FileMode.Create);
+        Byte[] DatosByte;
+        DatosByte = OStream.ToArray();
+        Fichero.Write(DatosByte, 0, DatosByte.Length);
+        Fichero.Flush();
+        Fichero.Close();
+}
+
+
+
+ABRIR PDF
+
+        Response.Clear();
+        Response.ContentType = "application/pdf";
+        Response.AddHeader("Content-disposition", "attachment; filename="+Ruta);
+        Response.WriteFile(Ruta);
+        Response.Flush();
+        Response.Close();

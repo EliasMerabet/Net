@@ -1,0 +1,14 @@
+       public ICommand CommandIntervencion
+        {
+            get
+            {
+                return new Command((sender) =>
+                {
+                    var p = (Button)sender;
+                    var nombreI = p.Text;
+                    var model = new Model();
+                    var identificador = model.FindIndex(p1 => p1.Nombre == nombreI);
+                    App.Current.MainPage.Navigation.PushModalAsync(new MainPageCS(identificador));
+                });
+            }
+        }

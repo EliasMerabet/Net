@@ -1,0 +1,49 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+using System.Data.SqlClient;
+
+namespace MVS18DESCONECTADO_BusquedaInformacion
+{
+    public partial class Form3 : Form
+    {
+
+        static string cadena = "Data Source=.;Initial Catalog=Hospital;Integrated Security=True";
+        SqlDataAdapter Ad = new SqlDataAdapter("Select Apellido, Oficio, Salario, Comision from Emp", cadena);
+        DataSet Ds = new DataSet();
+        DataView Dv;
+
+        public Form3()
+        {
+            InitializeComponent();
+        }
+
+        private void Form3_Load(object sender, EventArgs e)
+        {
+            Ad.Fill(Ds, "Emp");
+            Dv = Ds.Tables["Emp"].DefaultView;
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            String oficio = this.textBox1.Text;
+            Dv.RowFilter = "Oficio = '" + oficio + "'";
+
+            if (this.radioButton1.Checked == true)
+            {
+                Dv.Sort = "Apellido ASC";
+            }
+            else
+            {
+                Dv.Sort = "Salario ASC";
+            }
+
+            this.dataGridView1.DataSource = Dv;
+        }
+    }
+}

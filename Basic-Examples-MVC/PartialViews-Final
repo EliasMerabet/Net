@@ -1,0 +1,153 @@
+CONTROLLER.
+
+        public ActionResult Index()
+        {
+            return View();
+        }
+
+        public ActionResult recuperarDoctores()
+        {
+            ModeloHospital modelo = new ModeloHospital();
+            return View("DetallesDoctor", (List<DOCTOR>)modelo.getDoctores());
+        }
+
+        public ActionResult recuperarHospitales()
+        {
+            ModeloHospital modelo = new ModeloHospital();
+            //INDICO A QUE VISTA PARCIAL DEVUELVE ESTE VALOR CUANDO LLAMAMOS AL CONTROLADOR.
+            //ESTO ES PORQUE HAY VARIAS VISTAS DENTRO DE ESA CARPETA. Y TODAS USAN EL NOMBRE
+            //CARPETA_CONTROLLER.
+            return View("DetallesHospital", (List<HOSPITAL>)modelo.getHospitales());
+        }
+
+        public ActionResult recuperarPlantilla()
+        {
+            ModeloHospital modelo = new ModeloHospital();
+            return View("DetallesPlantilla", (List<PLANTILLA>)modelo.getPlantilla());
+        }
+        
+VIEW (Index).
+@{
+    ViewBag.Title = "Index";
+}
+
+<script src='@Url.Content("~/Scripts/jquery-1.10.2.min.js")' type="text/javascript"></script>
+<h3>Le sugerimos lo siguiente:</h3>
+<ol class="round">
+    <li class="one">
+        <h5>Vista parcial de Hospitales</h5>
+        <button type="button" id="btnhospitales">Vista de Hospitales</button>
+        <div id="detallehospitales" style="display: none"></div>
+    </li>
+
+    <li class="two">
+        <h5>Vista parcial de Doctores</h5>
+        <button type="button" id="btndoctores">Vista de Doctores</button>
+        <div id="detalledoctores" style="display: none"></div>
+    </li>
+
+    <li class="two">
+        <h5>Vista parcial de Plantilla</h5>
+        <button type="button" id="btnplantilla">Vista de Plantilla</button>
+        <div id="detalleplantilla" style="display: none"></div>
+    </li>
+
+</ol>
+
+<script>
+    $(document).ready(function () {
+        $("#btnhospitales").click(function () {
+            $("#detallehospitales").load("/Detalles/recuperarHospitales");
+            $("#detallehospitales").toggle();
+        });
+
+        $("#btndoctores").click(function () {
+            $("#detalledoctores").load("/Detalles/recuperarDoctores");
+            $("#detalledoctores").toggle();
+        });
+
+        $("#btnplantilla").click(function () {
+            $("#detalleplantilla").load("/Detalles/recuperarPlantilla");
+            $("#detalleplantilla").toggle();
+        });
+    });
+</script>
+
+VIEW (DetallePlantilla).
+@model IEnumerable<ResumenDatosHospitales.Models.PLANTILLA>
+
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Detalles de las personas</title>
+</head>
+<body>
+    <article>
+        <dl>
+            @foreach (var persona in Model)
+            {
+                <dt><b>@persona.APELLIDO</b></dt>
+                <dd>Funcion: @persona.FUNCION</dd>
+                <dd>Turno: @persona.T</dd>
+                <dd>Salario: @persona.SALARIO</dd>
+            }
+        </dl>
+    </article>
+</body>
+</html>
+
+VIEW (DetalleDoctor).
+@model IEnumerable<ResumenDatosHospitales.Models.DOCTOR>
+
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Detalles de las personas</title>
+</head>
+<body>
+    <article>
+        <dl>
+            @foreach (var persona in Model)
+            {
+                <dt><b>@persona.APELLIDO</b></dt>
+                <dd>Especialidad: @persona.ESPECIALIDAD</dd>
+            }
+        </dl>
+    </article>
+</body>
+</html>
+
+VIEW (DetalleHospital).
+@model IEnumerable<ResumenDatosHospitales.Models.HOSPITAL>
+
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Detalles de las personas</title>
+</head>
+<body>
+    <article>
+        <dl>
+            @foreach (var hos in Model)
+            {
+                <dt><b>@hos.NOMBRE</b></dt>
+                <dd>Direccion: @hos.DIRECCION</dd>
+                <dd>Telefono: @hos.TELEFONO</dd>
+                <dd>Numero de Camas: @hos.NUM_CAMA</dd>
+            }
+        </dl>
+    </article>
+</body>
+</html>
