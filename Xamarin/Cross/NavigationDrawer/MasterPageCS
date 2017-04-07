@@ -15,7 +15,7 @@ namespace NAMESPACE
 
             foreach (var m in model)
             {
-                var item = new MasterPageItem { Title = inter.Nombre, TargetType = typeof(I), IconSource = "task.png"};
+                var item = new MasterPageItem { Title = m.Nombre, TargetType = typeof(I), IconSource = "task.png"};
                 masterPageItems.Add(item);
             }
 
