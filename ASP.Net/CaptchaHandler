@@ -1,0 +1,70 @@
+CAPTCHAHANDLER.CS
+
+public class CaptchaHandler
+{
+    public static string RndTexto { get; set; }
+    private char[] Abc;
+
+    public CaptchaHandler()
+    {
+        Abc = new char[]{
+            'A','B','C','D','E','F','G','H','I','J','K','L','M','N','Ñ','O','P','Q','R','S',
+            'T','U','V','W','X','Y','Z'};
+        InitRndTexto();
+    }
+    //Creamos un texto aleatorio de 6 letras.
+    private void InitRndTexto()
+    {
+        Random Rnd = new Random();
+        System.Text.StringBuilder Sb = new System.Text.StringBuilder();
+
+        for (int i = 0; i < 6; i++)
+        {
+            Sb.Append(Abc[Rnd.Next(0, 27)]);
+        }
+
+        RndTexto = Sb.ToString();
+    }
+
+    #region Miembros de IHttpHandler
+
+    public bool IsReusable
+    {
+        get { return false; }
+    }
+
+    public String ProcessRequest()
+    {
+        Bitmap Imagen = new Bitmap(180, 80, PixelFormat.Format16bppRgb555);
+        Graphics Grafico = Graphics.FromImage(Imagen);
+
+        //Escribimos el texto.
+        Font Fuente = new Font(new FontFamily("Chiller"), 35, FontStyle.Italic);
+        Grafico.DrawString(RndTexto, Fuente, Brushes.Red, 10, 15);
+
+        //Dibujamos dos lineas.
+        for (int i = 0; i < 2; i++)
+        {
+            Point A = new Point(5, (35 + i * 10));
+            Point B = new Point(175, (35 + i * 10));
+            Grafico.DrawLine(new Pen(Brushes.Black, 3), A, B);
+        }
+
+        Imagen.Save(System.Web.Hosting.HostingEnvironment.MapPath("~/images/blog/captcha.jpeg"), ImageFormat.Jpeg);
+        return RndTexto;
+    }
+
+    #endregion
+}
+
+
+
+        CaptchaHandler cap = new CaptchaHandler();
+        valor = cap.ProcessRequest();
+
+        string baseImage = "../images/blog/captcha.jpeg?34343434";
+        int rand = new Random().Next(99999999);
+        captcha1.Src = string.Concat(baseImage, '?', rand);
+
+        cap1.Style.Add("display", "block");
+        errorCaptcha1.InnerText = "";
