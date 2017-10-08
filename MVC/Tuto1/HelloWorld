@@ -1,0 +1,148 @@
+-- HomeController
+
+using HelloWorld.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+
+namespace HelloWorld.Controllers
+{
+    public class HomeController : Controller
+    {
+        // GET: Home
+        static Customer c2 = new Customer();
+
+        public void CreateCustomer()
+        {
+            c2.Name = "Elias";
+            c2.Code = "55555555V";
+            c2.Amount = 555;
+        }
+        public ActionResult Index()
+        {
+            CreateCustomer();
+            return View("Index", c2);
+        }
+
+        public ActionResult Edit()
+        {
+            return View("Edit", c2);
+        }
+
+        [HttpPost]
+        public ActionResult Edit(Customer c)
+        {
+            Customer c1 = new Customer();
+            c1.Code = c.Code;
+            c1.Amount = c.Amount;
+            c1.Name = c.Name;
+            return View("Index", c1);
+        }
+
+    }
+}
+
+-- Model.Customer
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+
+namespace HelloWorld.Models
+{
+    public class Customer
+    {
+        public string Code { get; set; }
+        public string Name { get; set; }
+        public int Amount { get; set; }
+    }
+}
+
+-- Index.cshtml
+
+@model HelloWorld.Models.Customer
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+</head>
+<body>
+    <div>
+        <h4>Customer</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @Model.Code
+            </dt>
+            <dt>
+                @Model.Name
+            </dt>
+            <dt>
+                @if (Model.Amount > 50)
+                {
+                    <dd>Mayor que 50 </dd>
+                }
+                else
+                {
+                    <dd>Menor que 50</dd>
+                }
+                @Model.Amount
+            </dt>
+    
+        </dl>
+    </div>
+    <p>
+        @Html.ActionLink("Edit", "Edit") |
+        @Html.ActionLink("Back to List", "Index")
+    </p>
+</body>
+</html>
+
+-- Edit.cshtml
+
+@model HelloWorld.Models.Customer
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Edit</title>
+</head>
+<body>
+    <div> 
+        @using (Html.BeginForm("Edit", "Home", FormMethod.Post))
+        { 
+            <p>
+                @Html.LabelFor(model => model.Code, "Code")
+                @Html.EditorFor(model => model.Code, new { value= Model.Code })
+            </p>
+            <p>
+                @Html.LabelFor(model => model.Name, "Name")
+                @Html.EditorFor(model => model.Name, new { value = Model.Name })
+            </p>
+            <p>
+                @Html.LabelFor(model => model.Amount, "Amount")
+                @Html.EditorFor(model => model.Amount, new { value = Model.Amount })
+            </p>
+            <br />
+            <input type="submit" value="Enviar" />
+            @Html.ActionLink("Back to List", "Index")
+        }
+    </div>
+</body>
+</html>
