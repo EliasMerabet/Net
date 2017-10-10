@@ -1,0 +1,61 @@
+List.cshtml
+
+@model  List<Tuto2.Models.Peliculas>
+
+@{
+    ViewBag.Title = "List";
+}
+
+<div class="container">
+    <h1>Lista de Peliculas</h1><br /><br />
+    @using(@Html.BeginForm("Edit", "Home", FormMethod.Post, new { enctype = "multipart/form-data"}))
+    {
+        <table class="table table-hover table1">
+            <thead>
+                <tr>
+                    <th>
+                        Seleccionado
+                    </th>
+                    <th>
+                        Titulo
+                    </th>
+                    <th>
+                        Genero
+                    </th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @for (var i = 0; i < Model.Count; i++)
+            {
+                    <tr> 
+                        <td><input class="pull-right" type="checkbox" name="code" value="@Model[i].Code" /></td>
+                        <td><input class="pull-right" type="text" name="titulo" value="@Model[i].Titulo" /></td>
+                        <td><input class="pull-right" type="text" name="genero" value="@Model[i].Genero" /></td>                    
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr><td colspan="2"></td><td><input class="pull-right" type="submit" value="Editar" /></td></tr>
+            </tfoot>
+        </table>
+    }
+</div>
+
+Controller
+
+ [HttpPost]
+        public ActionResult Edit(List<int> code, List<string> titulo, List<string> genero)
+        {
+            if (code != null)
+            { 
+            for (int i = 0; i < Cartelera.Count; i++)
+            {
+                if (code.Contains(i))
+                {
+                    Cartelera[i].Titulo = titulo[i];
+                    Cartelera[i].Genero = genero[i];
+                }
+            }
+            }
+            return View("List1", Cartelera);
