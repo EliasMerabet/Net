@@ -59,3 +59,149 @@ _Footer
 
 Controller
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using Tuto2.Models;
+
+namespace Tuto2.Controllers
+{
+    public class HomeController : Controller
+    {
+        static List<Peliculas> Cartelera;
+
+        public ActionResult Index()
+        {
+            return View();
+        }
+
+        public ActionResult List()
+        {
+            Rellenar();
+
+            return View(Cartelera);
+        }
+
+        public ActionResult List1()
+        {
+            return View(Cartelera);
+        }
+
+        [HttpPost]
+        public ActionResult Edit(List<Peliculas> c)
+        {
+            for (int i = 0; i < c.Count; i++)
+            {
+                if (c[i].IsSelected == true)
+                {
+                    Cartelera[i] = c[i];
+                }
+            }
+
+            return View("List1", Cartelera);
+        }
+
+        private void Rellenar()
+        {
+            Cartelera = new List<Peliculas>();
+            int gen = 0;
+
+            for (int i = 0; i < 10; i++)
+            {
+                Peliculas p = new Peliculas();
+                p.Code = i;
+                p.Titulo = "Titulo " + i;
+                if (gen % 4 == 0)
+                { 
+                        p.Genero = "Accion";
+                }
+                else if (gen % 4 == 1)
+                {
+                    p.Genero = "Amor";
+                }
+                else if (gen % 4 == 2)
+                {
+                    p.Genero = "Sci-Fi";
+                }
+                else
+                {
+                    p.Genero = "Terror";
+                }
+
+                gen++;
+
+                Cartelera.Add(p);
+            }
+        }
+
+    }
+}
+
+List.cshtml
+
+@model  List<Tuto2.Models.Peliculas>
+
+@{
+    ViewBag.Title = "List";
+}
+
+<h2>List</h2>
+
+<div class="container">
+    <h1>Lista de Peliculas</h1>
+    @using(@Html.BeginForm("Edit", "Home", FormMethod.Post, new { enctype = "multipart/form-data"}))
+    {
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>
+                        Codigo
+                    </th>
+                    <th>
+                        Titulo
+                    </th>
+                    <th>
+                        Genero
+                    </th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @for (var i = 0; i < Model.Count; i++)
+            {
+                    <tr> 
+                        <td>@Html.CheckBoxFor(m => Model[i].IsSelected)</td>
+                        <td>@Html.TextBoxFor(m => Model[i].Titulo)</td>
+                        <td>@Html.TextBoxFor(m => Model[i].Genero)</td>                    
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr><td colspan="2"></td><td><input class="pull-right" type="submit" value="Editar" /></td></tr>
+            </tfoot>
+        </table>
+    }
+</div>
+
+Index.cshtml
+
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="jumbotron">
+    <h1>ASP.NET MVC</h1>
+    <p>Este es mi primer ejemplo de MVC usando plantillas maestras para los elementos comunes de la web</p>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <h2>Empezando</h2>
+        <p>
+            Veremos la presentacion por pantalla de una lista que proviene de un modelo estatico. Usando bootstrap 3 para darle apariencia de tabla.
+        </p>
+        <p><a class="btn btn-default" href="../Home/List/">Vayamos &raquo;</a></p>
+    </div>
+</div>
