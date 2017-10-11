@@ -1,0 +1,20 @@
+function ver(code) {
+    var form = document.getElementById("form11");
+    form.action = "/Home/Selected?code=" + code;
+    form.submit();
+}
+
+        <tbody>
+            @for (var i = 0; i < Model.Count; i++) {
+                using (Html.BeginForm("Selected", "Home", new { @code = Model[i].Code},FormMethod.Post, new { enctype = "multipart/form-data", name = "form11", id = "form11" }))
+                {
+                    <tr>
+                        <td onclick="ver(@Model[i].Code)">@Model[i].Code</td>
+                        <td>@Model[i].Titulo</td>
+                        <td>@Model[i].Duraccion</td>
+                        <td>@Model[i].Genero</td>
+                        <td><input type="submit" value="Ver" /></td>
+                    </tr>
+                }
+            }
+        </tbody>
