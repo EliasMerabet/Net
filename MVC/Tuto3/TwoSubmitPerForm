@@ -1,0 +1,24 @@
+[HttpPost]
+        public ActionResult Edit(List<int> code, List<string> titulo, List<string> genero)
+        {
+            if (code != null)
+            {
+                for (int i = 0; i < Cartelera.Count; i++)
+                {
+                    if (code.Contains(i))
+                    {
+                        Cartelera[i].Titulo = titulo[i];
+                        Cartelera[i].Genero = genero[i];
+                    }
+                }
+
+                if (Request.Form["Single"] != null)
+                {
+                    return View("Single", Cartelera[code[0]]);
+                }
+            }
+            return View("List1", Cartelera);
+        }
+        
+       
+                 <tr><td></td><td><input class="pull-right" type="submit" value="Ver" name="Single"/></td><td><input class="pull-right" type="submit" value="Editar" name="Edit"/></td></tr>
