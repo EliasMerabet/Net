@@ -1,0 +1,30 @@
+Web.Config
+
+<system.web>
+    <compilation>
+      <assemblies>
+        <add assembly="System.Web.Mvc, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31BF3856AD364E35" />
+      </assemblies>
+    </compilation>
+    <authentication mode="Windows"></authentication>
+    <authorization>
+      <deny users="?"/>
+    </authorization>
+  </system.web>
+</configuration>
+
+Controller
+
+namespace Tuto.Controllers
+{
+    [Authorize(Users =@"Kenzo-PC\Kenzo")]
+    public class HomeController : Controller
+    {
+        static List<Pelicula> Cartelera = new List<Pelicula>();
+        // GET: Home
+        [Authorize(Users = @"Kenzo-PC\Kenzo")]
+        public ActionResult Index()
+        {
+            return View(Cartelera);
+        }
+        ......
