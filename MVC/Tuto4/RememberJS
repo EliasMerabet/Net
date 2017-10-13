@@ -1,0 +1,68 @@
+
+JS
+
+function loginRMBM() {
+    var rmbm = document.getElementById("rmbm");
+    if (rmbm.checked) {
+        var user = document.getElementById("user").value;
+        var pass = document.getElementById("pass").value;
+
+        var cookies = document.cookie.split(';');//contains all the cookies
+        var cookieName = []; // to contain name of all the cookies
+
+        for (i = 0; i < cookies.length; i++) {
+            cookieName[i] = cookies[i].split('=')[0].trim();
+        }
+        if (cookieName.indexOf(user) > -1) { // false o -1 si no existe
+            // Actualizar cookie es igual que sobreescribirla
+        } else {
+            document.cookie = user + "=" + pass;
+        }
+
+        document.getElementById("formLogin").Action = "Home/Login";
+        document.getElementById("formLogin").submit();
+    }
+};
+
+function remember() {
+    var user = document.getElementById("user").value;
+    var pass = document.getElementById("pass");
+    pass.value = getCookie(user);
+}
+
+function getCookie(cn) {
+    var name = cn + "=";
+    var allCookie = document.cookie.split(';');
+    var cval = [];
+    for (var i = 0; i < allCookie.length; i++) {
+        if (allCookie[i].indexOf(name) > -1) {
+            cval = allCookie[i].split("=");
+        }
+    }
+    return (cval.length > 0) ? cval[1] : "";
+}
+
+VIEW
+
+@using (Html.BeginForm("Login", "Home", FormMethod.Post, new { id = "formLogin"}))
+{
+
+    if (ViewBag.Error != null)
+    {
+        <h4 style="color:red;">@ViewBag.Error</h4>
+    }
+
+    <div class="form-group" id="formLogin">
+        <label for="user">Usuario:</label><br />
+        <input type="text" name="user" id="user" onblur="remember()"/>
+    </div>
+    <div class="form-group">
+        <label for="pass">Password:</label><br />
+        <input type="password" name="pass" id="pass"/>
+    </div>
+    <div class="form-group">
+        <input type="checkbox" id="rmbm" value="true"/> Remember Me
+    </div>
+
+    <input type="button" value="Login" class="btn btn-default" id="login" onclick="loginRMBM()"/>
+}
