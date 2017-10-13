@@ -1,0 +1,17 @@
+$(document).ready(function () {
+    $('#login').click(function () {
+        if ($('#rmbm').prop('checked'))
+        {
+            var user = $('#user').val();
+            var pass = $('#pass').val();
+
+            if ($.cookie(user) === "null")
+            {
+                alert("nothing");
+            } else {
+                $.cookie(user, pass);
+                alert("created");
+            }
+        }   
+    });
+});
