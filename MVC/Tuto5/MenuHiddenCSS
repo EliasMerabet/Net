@@ -1,0 +1,8 @@
+.ocultar {
+    top: -35px !important;
+}
+
+.ocultar:hover {
+    top: 0px !important;
+    transition: .7s ease-out !important;
+}
