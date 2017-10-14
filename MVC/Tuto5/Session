@@ -1,0 +1,23 @@
+Default1
+
+public ActionResult Index()
+        {
+            TempData["VueltaCompleta"] = "VueltaCompleta";
+            Session["Session1"] = "HastaCerrarElNavegador";
+            ViewData["MyValor"] = "ControladorVista";
+            ViewBag.MyValor = "ControladorVista";
+            return RedirectToAction("Index", "Default2");
+        }
+       
+Default2
+
+public ActionResult Index()
+        {
+            string str = Convert.ToString(TempData["VueltaCompleta"]);
+            string str1 = Session["Session1"].ToString();
+            string str2 = Convert.ToString(ViewData["MyValor"]); // null
+            string str3 = Convert.ToString(ViewBag.MyValor); // null
+            ViewData["MyValor"] = "Controlador a Vista"; 
+            ViewBag.MyValor = "Controlador a Vista";
+            return View();
+        }
