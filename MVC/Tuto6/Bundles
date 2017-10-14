@@ -1,0 +1,49 @@
+BundleConfig
+
+//CREADO EN APP_START
+
+public class BundleConfig
+    {
+        public static void RegisterBundles(BundleCollection bundles)
+        {
+            bundles.Add(new ScriptBundle("~/Bundles").Include("~/Scripts/*.js"));
+            BundleTable.EnableOptimizations = true;
+        }
+    }
+
+
+GLOBAL.ASAX
+
+//LLAMA A BUNDLECONFIG
+
+protected void Application_Start()
+        {
+            AreaRegistration.RegisterAllAreas();
+            RouteConfig.RegisterRoutes(RouteTable.Routes);
+            BundleConfig.RegisterBundles(BundleTable.Bundles);
+        }
+        
+VIEW
+
+//YA NO LLAMA A LOS JS, HACE REFERENCIA AL BUNDLE AL INICIO
+
+@System.Web.Optimization.Scripts.Render("~/Bundles");
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    @*<script src="~/Scripts/JavaScript1.js"></script>
+    <script src="~/Scripts/JavaScript2.js"></script>*@
+    <title>Index</title>
+</head>
+<body>
+    <div> 
+    </div>
+</body>
+</html>
