@@ -1,0 +1,25 @@
+View
+
+<div>
+    <input type="button" value="Ver Dato JSON" onclick="return getJson();" />
+</div>
+
+<script type="text/javascript">
+    $(":button").click(function () {
+        $.getJSON("/Pelicula/getJson", function (result) {
+            $.each(result, function (i, field) {
+                alert(field);
+            });
+        });
+    });
+</script>
+
+Controller
+
+        public JsonResult getJson()
+        {
+            Pelicula p = new Pelicula();
+            p.Code = 1;
+            p.Titulo = "Soy Leyenda";
+            return Json(p, JsonRequestBehavior.AllowGet);
+        }
