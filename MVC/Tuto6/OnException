@@ -1,0 +1,13 @@
+protected override void OnException(ExceptionContext filterContext)
+        {
+            if (filterContext.ExceptionHandled)
+            {
+                return;
+            }
+            //Exception e = filterContext.Exception;
+            filterContext.Result = new ViewResult
+            {
+                ViewName = "_Error"
+            };
+            filterContext.ExceptionHandled = true;
+        }
