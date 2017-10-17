@@ -1,0 +1,8 @@
+.navBarH{
+    top: -40px !important;
+}
+
+.navBarH:hover {
+    top: 0px !important;
+    transition: .7s linear !important;
+}
