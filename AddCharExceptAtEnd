@@ -1,0 +1,7 @@
+string resultado = string.Empty;
+string coma = "";
+foreach (var li in list)
+{
+    resultado += coma + li.Text;
+    coma = ";";
+ }
