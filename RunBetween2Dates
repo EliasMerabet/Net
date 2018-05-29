@@ -1,0 +1,9 @@
+for (int anyo = anyoi; anyo <= anyof; anyo++)
+{
+      mesiaxu = anyo == anyoi ? mesi : 1;
+      mesfaux = anyo == anyof ? mesf : 12;
+      for (int mes = mesiaxu; mes <= mesfaux; mes++)
+       {
+           // DO THE MAGIC
+       }
+}
