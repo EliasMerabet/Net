@@ -1,0 +1,33 @@
+ switch (e.CommandName)
+        {
+            case "addCarrito":
+                string temp = Session["productosCarrito"]?.ToString();
+
+                if (!string.IsNullOrEmpty(temp))
+                {
+                    string res = "";
+                    bool found = false;
+                    foreach (string s in temp.Split(';'))
+                    {
+                        if (s != "")
+                        {
+                            if (s.Split('-')[0] == e.CommandArgument.ToString())
+                            {
+                                int number;
+                                int.TryParse(s.Split('-')[1], out number);
+                                res += s.Split('-')[0] + "-" + (number + 1) + ";";
+                                found = true;
+                            }
+                            else
+                            {
+                                res += s + ";";
+                            }
+                        }
+                    }
+                    if (!found) { Session["productosCarrito"] = res + e.CommandArgument + "-1;"; }
+                    else { Session["productosCarrito"] = res; }
+                }
+                else { Session["productosCarrito"] = e.CommandArgument + "-1;"; }
+
+                break;
+        }
