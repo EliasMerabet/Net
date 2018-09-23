@@ -1,0 +1,12 @@
+    private void RedirectAndMessage()
+    {
+        string message = "Has vaciado el carrito";
+        string url = "/index.aspx";
+        string script = "window.onload = function(){ alert('";
+        script += message;
+        script += "');";
+        script += "window.location = '";
+        script += url;
+        script += "'; }";
+        ClientScript.RegisterStartupScript(this.GetType(), "Redirect", script, true);
+    }
