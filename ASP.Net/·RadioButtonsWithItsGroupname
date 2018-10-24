@@ -1,0 +1,60 @@
+CSHTML
+
+<asp:Repeater runat="server" ID="repeaterImages" OnItemDataBound="repeaterImages_ItemDataBound">
+  <ItemTemplate>
+    <span>
+          <asp:RadioButton runat="server" ID="rbLogoSeleccionado" Text='Logo 0' GroupName="nombreLogo" /><br />
+          <asp:RadioButton runat="server" ID="rbLogoSeleccionadoApp" Text='Logo 1' GroupName="nombreLogoApp" /><br />
+          <asp:RadioButton runat="server" ID="rbLogoSeleccionadoAppBlanco" Text='Logo 2' GroupName="nombreLogoAppBlanco" />
+   </span>
+ </ItemTemplate>
+</asp:Repeater>
+
+
+JS
+
+<script>
+    function SetUniqueRadioButton(nameregex, current) {
+
+        for (i = 0; i < document.forms[0].elements.length; i++) {
+
+            elm = document.forms[0].elements[i]
+
+            if (elm.type == 'radio') {
+
+                elm.checked = false;
+            }
+        }
+        current.checked = true;
+    }
+</script>
+
+
+CS
+
+protected void repeaterImages_ItemDataBound(object sender, RepeaterItemEventArgs e)
+{
+    try
+    {
+        if (e.Item.ItemType == ListItemType.Item || e.Item.ItemType == ListItemType.AlternatingItem)
+        {
+            RadioButton rbLogoSeleccionado = (RadioButton)e.Item.FindControl("rbLogoSeleccionado");
+            RadioButton rbLogoSeleccionadoApp = (RadioButton)e.Item.FindControl("rbLogoSeleccionadoApp");
+            RadioButton rbLogoSeleccionadoAppBlanco = (RadioButton)e.Item.FindControl("rbLogoSeleccionadoAppBlanco");
+
+            string script = "SetUniqueRadioButton('repeaterImages.*nombreLogo',this)";
+            string scriptApp = "SetUniqueRadioButton('repeaterImages.*nombreLogoApp',this)";
+            string scriptAppBlanco = "SetUniqueRadioButton('repeaterImages.*nombreLogoAppBlanco',this)";
+
+            rbLogoSeleccionado.Attributes.Add("onclick", script);
+            rbLogoSeleccionadoApp.Attributes.Add("onclick", scriptApp);
+            rbLogoSeleccionadoAppBlanco.Attributes.Add("onclick", scriptAppBlanco);
+        }
+    }
+
+    catch (Exception ex)
+    {
+        PIPEvo.Log.Log.RegistrarError(ex);
+        throw;
+    }
+}
